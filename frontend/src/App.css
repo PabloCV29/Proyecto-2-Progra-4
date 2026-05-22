@@ -1,0 +1,157 @@
+/* ─── Variables ──────────────────────────────────────────────────────────── */
+:root {
+  --rojo:       #c0392b;
+  --rojo-light: #e74c3c;
+  --gris-bg:    #f2f2f2;
+  --gris-card:  #e8e8e8;
+  --gris-borde: #cccccc;
+  --texto:      #1a1a1a;
+  --texto-sub:  #555555;
+  --blanco:     #ffffff;
+  --radio:      6px;
+  --sombra:     0 1px 3px rgba(0,0,0,.12);
+}
+
+/* ─── Reset básico ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Arial, sans-serif; background: var(--blanco); color: var(--texto); }
+
+/* ─── Wrapper ────────────────────────────────────────────────────────────── */
+.app-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.app-header { background: var(--blanco); padding: 0 24px; }
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 0;
+}
+.header-divider { height: 2px; background: var(--rojo); }
+
+/* Logo */
+.logo-circle {
+  width: 56px; height: 56px;
+  border: 2px solid var(--rojo);
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: var(--rojo);
+  line-height: 1.1; text-align: center;
+  flex-shrink: 0;
+}
+.logo-icon { font-size: 20px; }
+
+/* Nav */
+.main-nav { display: flex; gap: 20px; }
+.nav-link {
+  background: none; border: none; cursor: pointer;
+  font-size: 15px; font-weight: 500;
+  color: var(--rojo); padding: 4px 0;
+  position: relative; transition: color .15s;
+}
+.nav-link::after {
+  content: ""; position: absolute; left: 0; bottom: -2px;
+  width: 0; height: 2px; background: var(--rojo);
+  transition: width .2s;
+}
+.nav-link:hover::after,
+.nav-link--active::after { width: 100%; }
+
+/* ─── Main ───────────────────────────────────────────────────────────────── */
+.app-main { flex: 1; padding: 24px; background: var(--blanco); }
+
+.main-titulo {
+  font-size: 22px; font-weight: 600;
+  margin-bottom: 20px; color: var(--texto);
+}
+
+/* Grid de puestos */
+.puestos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* Tarjeta */
+.puesto-card {
+  background: var(--gris-card);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.puesto-card:hover {
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 2px rgba(192,57,43,.15);
+}
+
+.puesto-empresa { font-size: 13px; color: var(--texto-sub); }
+.puesto-nombre  { font-size: 15px; font-weight: 700; color: var(--texto); }
+.puesto-salario { font-size: 14px; color: var(--texto); margin-bottom: 4px; }
+
+/* Botón ver detalle */
+.btn-detalle {
+  width: 100%; padding: 6px 0;
+  border: 1px solid var(--gris-borde); border-radius: var(--radio);
+  background: var(--blanco); color: var(--texto);
+  font-size: 13px; cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-detalle:hover {
+  background: var(--rojo); color: var(--blanco);
+  border-color: var(--rojo);
+}
+
+/* Estados */
+.estado-msg { color: var(--texto-sub); font-size: 14px; margin-bottom: 12px; }
+.estado-msg--error { color: var(--rojo); }
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+.app-footer { background: var(--blanco); padding: 0 24px 20px; }
+.footer-divider { height: 2px; background: var(--rojo); margin-bottom: 14px; }
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-left, .footer-right {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.footer-marca  { font-size: 15px; font-weight: 700; color: var(--rojo); }
+.footer-empresa { font-size: 13px; color: var(--rojo); }
+.footer-contacto, .footer-creditos { font-size: 13px; color: var(--rojo); }
+
+/* ─── Modal ──────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.modal-content {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 28px 32px;
+  max-width: 480px; width: 90%;
+  position: relative;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.modal-close {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none; font-size: 18px;
+  cursor: pointer; color: var(--texto-sub);
+}
+.modal-titulo  { font-size: 20px; font-weight: 700; }
+.modal-salario { font-size: 15px; }
+.modal-descripcion h4,
+.modal-requisitos h4 { font-size: 13px; text-transform: uppercase; color: var(--texto-sub); margin-bottom: 4px; }
+.btn-aplicar {
+  margin-top: 8px; padding: 10px;
+  background: var(--rojo); color: var(--blanco);
+  border: none; border-radius: var(--radio);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.btn-aplicar:hover { background: var(--rojo-light); }

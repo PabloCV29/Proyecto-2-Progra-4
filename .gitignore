@@ -1,0 +1,22 @@
+# ── BACKEND (Maven / Spring Boot) ──────────────────────
+backend/target/
+**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Configuración local con contraseñas — cada dev tiene la suya
+backend/src/main/resources/application.properties
+
+# ── FRONTEND (Node / Vite / React) ─────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# ── Sistema operativo ───────────────────────────────────
+.DS_Store
+Thumbs.db
