@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import registroempresa from "./pages/registroempresa.jsx"
 import "./App.css";
+
 
 function PuestoCard({ puesto, onVerDetalle }) {
     return (
         <div className="puesto-card">
-            <span className="puesto-empresa">{puesto.nombreEmpresa}</span>  {/* ← */}
+            <span className="puesto-empresa">{puesto.nombreEmpresa}</span>
             <h3 className="puesto-nombre">{puesto.descripcion}</h3>
-            <p className="puesto-salario">&#8353; {puesto.salario.toLocaleString()}</p>
+            <p className="puesto-salario">₡ {puesto.salario.toLocaleString()}</p>
+
+            {/* Requisitos OCULTOS en la card */}
+
             <button className="btn-detalle" onClick={() => onVerDetalle(puesto.id)}>
                 Ver detalle
             </button>
@@ -21,13 +27,30 @@ function DetalleModal({ puesto, onClose }) {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={onClose}>✕</button>
-                <span className="puesto-empresa">Empresa:{puesto.nombreEmpresa}</span>  {/* ← */}
-                <h2 className="modal-titulo">Nombre del Puesto: {puesto.descripcion}</h2>
-                <p className="modal-salario">&#8353; {puesto.salario.toLocaleString()}</p>
+                <span className="puesto-empresa">{puesto.nombreEmpresa}</span>
+                <h2 className="modal-titulo">{puesto.descripcion}</h2>
+                <p className="modal-salario">₡ {puesto.salario.toLocaleString()}</p>
+
                 <div className="modal-descripcion">
                     <h4>Descripción</h4>
                     <p>{puesto.descripcion ?? "Sin descripción disponible."}</p>
                 </div>
+
+                {/* ← AQUÍ: Características SOLO en el modal */}
+                {puesto.caracteristicasPuestos && puesto.caracteristicasPuestos.length > 0 && (
+                    <div className="modal-caracteristicas">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            {puesto.caracteristicasPuestos.map((car) => (
+                                <li key={car.id}>
+                                    <strong>{car.caracteristicas?.nombre}</strong>
+                                    <span className="nivel-requerido">Nivel: {car.nivelRequerido}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <button className="btn-aplicar">Aplicar ahora</button>
             </div>
         </div>
@@ -46,7 +69,7 @@ export default function App() {
   const navLinks = [
     { key: "inicio",    label: "BolsaEmpleo" },
     { key: "buscar",    label: "Buscar" },
-    { key: "empresa",   label: "Empresa" },
+      { key: "empresa", label: "Empresa", accion: () => setVista("registroEmpresa") },
     { key: "oferente",  label: "Oferente" },
     { key: "login",     label: "Login" },
   ];

@@ -23,13 +23,12 @@ public class EmpresaService {
         return null;
     }
 
-    public void registrar(Empresa empresa){
-        if(empresaRepository.existsById(empresa.getCorreo())){
-            throw new IllegalArgumentException("El empresa ya existe en el sistema");
+    public Empresa registrar(Empresa empresa) {
+        if (empresaRepository.existsById(empresa.getCorreo())) {
+            throw new IllegalArgumentException("La empresa ya existe en el sistema");
         }
-        //empresa.setClave(passwordEncoder.encode(empresa.getClave()));
         empresa.setAprobado(false);
-        empresaRepository.save(empresa);
+        return empresaRepository.save(empresa);  // ← retornar la empresa guardada
     }
 
     public List<Empresa> listaEsperaAprobacion(){
