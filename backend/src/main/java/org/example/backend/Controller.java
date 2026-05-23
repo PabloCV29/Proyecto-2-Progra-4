@@ -2,9 +2,8 @@ package org.example.backend;
 
 import org.example.backend.data.PuestoRepository;
 import org.example.backend.logic.Puesto;
+import org.example.backend.logic.Service.PuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,21 +11,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping ("/api")
+@CrossOrigin(origins = "*")
 public class Controller {
     @Autowired
     private PuestoRepository puestoRepository;
 
+    @Autowired
+    private PuestoService puestoService; //Este es el correcto
+
     @GetMapping("/puestos/ultimos")
-    public ResponseEntity<List<Puesto>> getUltimosPuestos() {
-        PageRequest pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "fechaRegistro"));
-        List<Puesto> ultimos = puestoRepository.findAll(pageable).getContent();
-        return ResponseEntity.ok(ultimos);
+    public List<Puesto> getUltimosPuestos() {
+        return puestoService.list5Ultimos();
     }
 
     @GetMapping("/puestos")
-    public ResponseEntity<List<Puesto>> getAllPuestos() {
-        List<Puesto> puestos = puestoRepository.findByActivoTrue();
-        return ResponseEntity.ok(puestos);
+    public List<Puesto> getAllPuestos() {
+        return puestoRepository.findByActivoTrue();
     }
 
     @GetMapping("/puestos/{id}")

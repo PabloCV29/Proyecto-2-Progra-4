@@ -1,5 +1,6 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,5 +32,6 @@ public class Empresa {
     private boolean aprobado;
 
     @OneToMany(mappedBy = "empresa")
+    @JsonManagedReference
     private List<Puesto> puestos;
 }

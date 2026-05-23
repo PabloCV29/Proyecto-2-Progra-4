@@ -7,7 +7,7 @@ function PuestoCard({ puesto, onVerDetalle }) {
   return (
       <div className="puesto-card">
         <span className="puesto-empresa">{puesto.empresa}</span>
-        <h3 className="puesto-nombre">{puesto.nombre}</h3>
+        <h3 className="puesto-nombre">{puesto.descripcion}</h3>
         <p className="puesto-salario">&#8353; {puesto.salario.toLocaleString()}</p>
         <button
             className="btn-detalle"
@@ -27,7 +27,7 @@ function DetalleModal({ puesto, onClose }) {
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <button className="modal-close" onClick={onClose}>✕</button>
           <span className="puesto-empresa">{puesto.empresa}</span>
-          <h2 className="modal-titulo">{puesto.nombre}</h2>
+          <h2 className="modal-titulo">{puesto.descripcion}</h2>
           <p className="modal-salario">&#8353; {puesto.salario.toLocaleString()}</p>
           <div className="modal-descripcion">
             <h4>Descripción</h4>

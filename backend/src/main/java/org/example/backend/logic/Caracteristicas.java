@@ -1,5 +1,7 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -20,8 +22,10 @@ public class Caracteristicas {
 
     @ManyToOne
     @JoinColumn(name = "padre_id")
+    @JsonBackReference("caracteristica-padre")
     private Caracteristicas padre;
 
     @OneToMany(mappedBy = "padre")
+    @JsonManagedReference("caracteristica-padre")
     private List<Caracteristicas> hijos;
 }
