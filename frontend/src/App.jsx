@@ -2,47 +2,36 @@ import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
 import "./App.css";
 
-// ─── Componente tarjeta de puesto ────────────────────────────────────────────
 function PuestoCard({ puesto, onVerDetalle }) {
-  return (
-      <div className="puesto-card">
-        <span className="puesto-empresa">{puesto.empresa}</span>
-        <h3 className="puesto-nombre">{puesto.descripcion}</h3>
-        <p className="puesto-salario">&#8353; {puesto.salario.toLocaleString()}</p>
-        <button
-            className="btn-detalle"
-            onClick={() => onVerDetalle(puesto.id)}
-        >
-          Ver detalle
-        </button>
-      </div>
-  );
+    return (
+        <div className="puesto-card">
+            <span className="puesto-empresa">{puesto.nombreEmpresa}</span>  {/* ← */}
+            <h3 className="puesto-nombre">{puesto.descripcion}</h3>
+            <p className="puesto-salario">&#8353; {puesto.salario.toLocaleString()}</p>
+            <button className="btn-detalle" onClick={() => onVerDetalle(puesto.id)}>
+                Ver detalle
+            </button>
+        </div>
+    );
 }
 
-// ─── Modal de detalle ─────────────────────────────────────────────────────────
 function DetalleModal({ puesto, onClose }) {
-  if (!puesto) return null;
-  return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <button className="modal-close" onClick={onClose}>✕</button>
-          <span className="puesto-empresa">{puesto.empresa}</span>
-          <h2 className="modal-titulo">{puesto.descripcion}</h2>
-          <p className="modal-salario">&#8353; {puesto.salario.toLocaleString()}</p>
-          <div className="modal-descripcion">
-            <h4>Descripción</h4>
-            <p>{puesto.descripcion ?? "Sin descripción disponible."}</p>
-          </div>
-          {puesto.requisitos && (
-              <div className="modal-requisitos">
-                <h4>Requisitos</h4>
-                <p>{puesto.requisitos}</p>
-              </div>
-          )}
-          <button className="btn-aplicar">Aplicar ahora</button>
+    if (!puesto) return null;
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={onClose}>✕</button>
+                <span className="puesto-empresa">Empresa:{puesto.nombreEmpresa}</span>  {/* ← */}
+                <h2 className="modal-titulo">Nombre del Puesto: {puesto.descripcion}</h2>
+                <p className="modal-salario">&#8353; {puesto.salario.toLocaleString()}</p>
+                <div className="modal-descripcion">
+                    <h4>Descripción</h4>
+                    <p>{puesto.descripcion ?? "Sin descripción disponible."}</p>
+                </div>
+                <button className="btn-aplicar">Aplicar ahora</button>
+            </div>
         </div>
-      </div>
-  );
+    );
 }
 
 // ─── App principal ────────────────────────────────────────────────────────────

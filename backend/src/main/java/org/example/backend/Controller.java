@@ -1,11 +1,14 @@
 package org.example.backend;
 
+import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.PuestoRepository;
 import org.example.backend.logic.Puesto;
 import org.example.backend.logic.Service.PuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,8 +23,11 @@ public class Controller {
     private PuestoService puestoService; //Este es el correcto
 
     @GetMapping("/puestos/ultimos")
-    public List<Puesto> getUltimosPuestos() {
-        return puestoService.list5Ultimos();
+    public List<PuestoResumenDTO> getUltimosPuestos() {
+        return puestoService.list5Ultimos()
+                .stream()
+                .map(PuestoResumenDTO::new)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/puestos")
@@ -30,10 +36,10 @@ public class Controller {
     }
 
     @GetMapping("/puestos/{id}")
-    public ResponseEntity<Puesto> getPuestoById(@PathVariable Long id) {
-        return puestoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public PuestoResumenDTO getDetallePuesto(@PathVariable Long id) {
+        Puesto p = puestoService.buscarPuestoPorId(id);
+        if (p == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return new PuestoResumenDTO(p);
     }
 
     @GetMapping("/puestos/buscar")
