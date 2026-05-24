@@ -1,0 +1,43 @@
+.registro-oferente-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.ro-footer {
+    background-color: #333;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    margin-top: auto;
+}
+
+.ro-footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.ro-footer-left,
+.ro-footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ro-footer-right { text-align: right; }
+
+.ro-footer-marca { font-weight: bold; font-size: 1.1rem; color: white; }
+
+.ro-footer-empresa,
+.ro-footer-contacto,
+.ro-footer-creditos { font-size: 0.9rem; color: #bbb; }
+
+@media (max-width: 768px) {
+    .ro-footer-inner { flex-direction: column; text-align: center; }
+    .ro-footer-right { text-align: center; }
+}

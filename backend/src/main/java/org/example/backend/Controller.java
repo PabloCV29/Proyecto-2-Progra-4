@@ -3,8 +3,10 @@ package org.example.backend;
 import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.PuestoRepository;
 import org.example.backend.logic.Empresa;
+import org.example.backend.logic.Oferente;
 import org.example.backend.logic.Puesto;
 import org.example.backend.logic.Service.EmpresaService;
+import org.example.backend.logic.Service.OferenteService;
 import org.example.backend.logic.Service.PuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,9 @@ public class Controller {
 
     @Autowired
     private EmpresaService empresaService;//Este es el correcto
+
+    @Autowired
+    private OferenteService oferenteService;
 
     @GetMapping("/puestos/ultimos")
     public List<PuestoResumenDTO> getUltimosPuestos() {
@@ -98,6 +103,21 @@ public class Controller {
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             e.printStackTrace();
+            response.put("error", "Error al registrar: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    @PostMapping("/oferente/registro")
+    public ResponseEntity<Map<String, Object>> registrarOferente(@RequestBody Oferente oferente) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            oferenteService.registrar(oferente);
+            response.put("mensaje", "Registro exitoso. Esperá la aprobación del administrador.");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
             response.put("error", "Error al registrar: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Registroempresa from "./pages/registroempresa.jsx"
+import RegistroOferentes from "./pages/registrooferente.jsx"
 import "./App.css";
-
+import Header from "./Header";
 
 function PuestoCard({ puesto, onVerDetalle }) {
     return (
@@ -67,48 +68,34 @@ export default function App() {
     fetchUltimosPuestos();
   }, [fetchUltimosPuestos]);
 
-  const navLinks = [
-    { key: "inicio",    label: "BolsaEmpleo" },
-    { key: "buscar",    label: "Buscar" },
-      { key: "empresa", label: "Empresa" },
-    { key: "oferente",  label: "Oferente" },
-    { key: "login",     label: "Login" },
-  ];
+
+    const handleNavClick = (key) => {
+        setNavActivo(key);
+        if (key === "empresa") setVista("registroEmpresa");
+        else if (key === "oferente") setVista("registroOferente");
+        else setVista("inicio");  // ← cualquier otro link vuelve al inicio
+    };
+
     if (vista === "registroEmpresa") {
-        return <Registroempresa onCancelar={() => setVista("inicio")} />;
+        return (
+            <div className="app-wrapper">
+                <Header navActivo={navActivo} onNavClick={handleNavClick} />
+                <Registroempresa onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
+            </div>
+        );
     }
 
+    if (vista === "registroOferente") {
+        return (
+            <div className="app-wrapper">
+                <Header navActivo={navActivo} onNavClick={handleNavClick} />
+                <RegistroOferentes onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
+            </div>
+        );
+    }
   return (
       <div className="app-wrapper">
-
-        {/* ── HEADER ─────────────────────────────────────────────────────── */}
-        <header className="app-header">
-          <div className="header-inner">
-            <div className="logo-area">
-              <div className="logo-circle">
-                <span className="logo-text-top">OFERTAS</span>
-                <span className="logo-icon">👥</span>
-                <span className="logo-text-bot">DE EMPLEO</span>
-              </div>
-            </div>
-            <nav className="main-nav">
-              {navLinks.map((link) => (
-                  <button
-                      key={link.key}
-                      className={`nav-link ${navActivo === link.key ? "nav-link--active" : ""}`}
-                      onClick={() => {
-                          setNavActivo(link.key);
-                          if (link.key === "empresa") setVista("registroEmpresa");
-                      }}
-                  >
-                    {link.label}
-                  </button>
-              ))}
-            </nav>
-          </div>
-          <div className="header-divider" />
-        </header>
-
+          <Header navActivo={navActivo} onNavClick={handleNavClick} />
         {/* ── MAIN ───────────────────────────────────────────────────────── */}
         <main className="app-main">
           <h1 className="main-titulo">Bolsa de Empleo</h1>

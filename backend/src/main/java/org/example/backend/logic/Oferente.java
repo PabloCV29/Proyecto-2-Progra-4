@@ -33,7 +33,7 @@ public class Oferente {
     private String residencia;
     @Column(length = 60)
     private String clave;
-    private boolean aprobado;
+    private Boolean aprobado;
     private String curriculum;
 
     @OneToMany(mappedBy = "oferente")

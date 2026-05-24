@@ -1,13 +1,15 @@
 import { useState } from "react";
+import "./registrooferente.css";
 
-import "./registroempresa.css";
-
-export default function RegistroEmpresa({ onCancelar }) {  // ← recibir función por prop
+export default function RegistroOferente({ onCancelar }) {
     const [formData, setFormData] = useState({
         nombre: "",
+        apellido: "",
+        identificacion: "",
         correo: "",
+        nacionalidad: "",
+        residencia: "",
         telefono: "",
-        localizacion: "",
         clave: "",
     });
     const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
@@ -23,27 +25,29 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
         setLoading(true);
         setMensaje({ tipo: "", texto: "" });
 
-
-        console.log("Enviando:", JSON.stringify(formData));
-
         try {
-            const response = await fetch("/api/empresa/registro", {
+            const response = await fetch("/api/oferente/registro", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
 
             const data = await response.json();
-            console.log("Respuesta del servidor:", data);
 
             if (response.ok) {
                 setMensaje({
                     tipo: "exito",
                     texto: "Registro exitoso. Esperá la aprobación del administrador.",
                 });
+                setFormData({
+                    nombre: "", apellido: "", identificacion: "",
+                    correo: "", nacionalidad: "", residencia: "",
+                    telefono: "", clave: "",
+                });
             } else {
                 setMensaje({
                     tipo: "error",
+                    texto: data.error || "Error en el registro",
                 });
             }
         } catch (error) {
@@ -54,9 +58,9 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
     };
 
     return (
-        <div className="registro-empresa-wrapper">
+        <div className="registro-oferente-wrapper">
             <div className="dashboard-container">
-                <h1>Registro Empresa</h1>
+                <h1>Registro Oferente</h1>
                 <p className="subtitle">Complete los datos para completar el registro</p>
 
                 {mensaje.texto && (
@@ -72,10 +76,30 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                                value={formData.nombre} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
+                        <label htmlFor="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido"
+                               value={formData.apellido} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="identificacion">Identificación</label>
+                        <input type="text" id="identificacion" name="identificacion"
+                               value={formData.identificacion} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
                         <label htmlFor="correo">Correo Electrónico</label>
                         <input type="email" id="correo" name="correo"
-                               placeholder="example@corp.com"
+                               placeholder="example@ofe.com"
                                value={formData.correo} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="nacionalidad">Nacionalidad</label>
+                        <input type="text" id="nacionalidad" name="nacionalidad"
+                               value={formData.nacionalidad} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="residencia">Residencia</label>
+                        <input type="text" id="residencia" name="residencia"
+                               value={formData.residencia} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="telefono">Teléfono</label>
@@ -83,14 +107,9 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                                value={formData.telefono} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="localizacion">Localización</label>
-                        <input type="text" id="localizacion" name="localizacion"
-                               value={formData.localizacion} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
                         <label htmlFor="clave">Clave</label>
                         <input type="password" id="clave" name="clave"
-                               placeholder="**********"
+                               placeholder="*******"
                                value={formData.clave} onChange={handleChange} required />
                     </div>
                     <div className="actions">
@@ -104,21 +123,20 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                     </div>
                 </form>
             </div>
-            <footer className="re-footer">
-                <div className="re-footer-inner">
-                    <div className="re-footer-left">
-                        <strong className="re-footer-marca">Bolsa de Empleo</strong>
-                        <span className="re-footer-empresa">Total Soft Inc.</span>
+            <footer className="ro-footer">
+                <div className="ro-footer-inner">
+                    <div className="ro-footer-left">
+                        <strong className="ro-footer-marca">Bolsa de Empleo</strong>
+                        <span className="ro-footer-empresa">Total Soft Inc.</span>
                     </div>
-                    <div className="re-footer-right">
-                        <span className="re-footer-contacto">Contacto: info@bolsaempleo.local</span>
-                        <span className="re-footer-creditos">
-                Créditos: Mathiw Aguero, Pablo Campos, Juan Pablo Sanchez
-            </span>
+                    <div className="ro-footer-right">
+                        <span className="ro-footer-contacto">Contacto: info@bolsaempleo.local</span>
+                        <span className="ro-footer-creditos">
+                            Créditos: Mathiw Aguero, Pablo Campos, Juan Pablo Sanchez
+                        </span>
                     </div>
                 </div>
             </footer>
         </div>
-
     );
 }

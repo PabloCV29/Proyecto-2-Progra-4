@@ -18,7 +18,7 @@ public class OferenteService {
 
     public Oferente login(String correo, String password) {
         Oferente oferente = oferenteRepository.findByCorreo(correo).orElse(null);
-        if (oferente != null && oferente.getClave().equals(password) && oferente.isAprobado()) {
+        if (oferente != null && oferente.getClave().equals(password) && oferente.getAprobado()) {
             return oferente;
         }
         return null;
