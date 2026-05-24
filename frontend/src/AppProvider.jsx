@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback } from "react";
 const AppContext = createContext(null);
 
 // Base URL del backend Spring Boot
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = "/api";
 
 // ─── Provider ───────────────────────────────────────────────────────────────
 export function AppProvider({ children }) {
