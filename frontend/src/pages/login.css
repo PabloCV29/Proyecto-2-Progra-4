@@ -59,3 +59,30 @@
     padding: 1.5rem 2rem;
     text-align: center;
 }
+
+.input-clave-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-clave-wrapper input {
+    width: 100%;
+    padding-right: 4rem;
+}
+
+.btn-toggle-clave {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #007bff; /* Color azul para el texto, cámbialo si gustas */
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.btn-toggle-clave:hover {
+    text-decoration: underline;
+}
