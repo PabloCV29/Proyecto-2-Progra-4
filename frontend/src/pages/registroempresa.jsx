@@ -12,6 +12,7 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
     });
     const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
     const [loading, setLoading] = useState(false);
+    const [mostrarClave, setMostrarClave] = useState(false); // ← nuevo
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,10 +42,15 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                     tipo: "exito",
                     texto: "Registro exitoso. Esperá la aprobación del administrador.",
                 });
-            } else {
-                setMensaje({
-                    tipo: "error",
+                setFormData({
+                    nombre: "",
+                    correo: "",
+                    telefono: "",
+                    localizacion: "",
+                    clave: "",
                 });
+            } else {
+                setMensaje({ tipo: "error", texto: "Error al registrar la empresa." });
             }
         } catch (error) {
             setMensaje({ tipo: "error", texto: "Error al conectar con el servidor" });
@@ -87,12 +93,29 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                         <input type="text" id="localizacion" name="localizacion"
                                value={formData.localizacion} onChange={handleChange} required />
                     </div>
+
+
                     <div className="form-group">
                         <label htmlFor="clave">Clave</label>
-                        <input type="password" id="clave" name="clave"
-                               placeholder="**********"
-                               value={formData.clave} onChange={handleChange} required />
+                        <div className="input-clave-wrapper">
+                            <input
+                                type={mostrarClave ? "text" : "password"}
+                                id="clave" name="clave"
+                                placeholder="**********"
+                                value={formData.clave}
+                                onChange={handleChange} required
+                            />
+                            <button
+                                type="button"
+                                className="btn-toggle-clave"
+                                onClick={() => setMostrarClave((v) => !v)}
+                                title={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
+                            >
+                                {mostrarClave ? "🙈" : "👁️"}
+                            </button>
+                        </div>
                     </div>
+
                     <div className="actions">
                         <button type="submit" className="btn btn-primary" disabled={loading}>
                             {loading ? "Registrando..." : "Registrar"}

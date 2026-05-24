@@ -14,6 +14,7 @@ export default function RegistroOferente({ onCancelar }) {
     });
     const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
     const [loading, setLoading] = useState(false);
+    const [mostrarClave, setMostrarClave] = useState(false); // ← nuevo
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -106,12 +107,30 @@ export default function RegistroOferente({ onCancelar }) {
                         <input type="text" id="telefono" name="telefono"
                                value={formData.telefono} onChange={handleChange} required />
                     </div>
+
+
                     <div className="form-group">
                         <label htmlFor="clave">Clave</label>
-                        <input type="password" id="clave" name="clave"
-                               placeholder="*******"
-                               value={formData.clave} onChange={handleChange} required />
+                        <div className="input-clave-wrapper">
+                            <input
+                                type={mostrarClave ? "text" : "password"}
+                                id="clave" name="clave"
+                                placeholder="**********"
+                                value={formData.clave}
+                                onChange={handleChange} required
+                            />
+                            <button
+                                type="button"
+                                className="btn-toggle-clave"
+                                onClick={() => setMostrarClave((v) => !v)}
+                                title={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
+                            >
+                                {mostrarClave ? "🙈" : "👁️"}
+                            </button>
+                        </div>
                     </div>
+
+
                     <div className="actions">
                         <button type="submit" className="btn btn-primary" disabled={loading}>
                             {loading ? "Registrando..." : "Registrar"}
