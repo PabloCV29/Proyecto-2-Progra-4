@@ -52,7 +52,7 @@ export default function RegistroEmpresa({ onCancelar }) {  // ‚Üê recibir funci√
             } else {
                 setMensaje({ tipo: "error", texto: "Error al registrar la empresa." });
             }
-        } catch (error) {
+        } catch {
             setMensaje({ tipo: "error", texto: "Error al conectar con el servidor" });
         } finally {
             setLoading(false);

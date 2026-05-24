@@ -2,9 +2,11 @@ package org.example.backend;
 
 import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.PuestoRepository;
+import org.example.backend.logic.Administrador;
 import org.example.backend.logic.Empresa;
 import org.example.backend.logic.Oferente;
 import org.example.backend.logic.Puesto;
+import org.example.backend.logic.Service.AdministradorService;
 import org.example.backend.logic.Service.EmpresaService;
 import org.example.backend.logic.Service.OferenteService;
 import org.example.backend.logic.Service.PuestoService;
@@ -33,6 +35,9 @@ public class Controller {
 
     @Autowired
     private OferenteService oferenteService;
+
+    @Autowired
+    private AdministradorService administradorService;
 
     @GetMapping("/puestos/ultimos")
     public List<PuestoResumenDTO> getUltimosPuestos() {
@@ -122,4 +127,80 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    // Para Log In de Admin
+    @PostMapping("/admin/login")
+    public ResponseEntity<Map<String, Object>> loginAdmin(@RequestBody Map<String, String> body) {
+        Map<String, Object> response = new HashMap<>();
+        String id = body.get("identificacion");
+        String clave = body.get("clave");
+
+        if (id == null || clave == null) {
+            response.put("error", "Identificación y clave son requeridos");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        Administrador admin = administradorService.login(id, clave);
+        if (admin == null) {
+            response.put("error", "Credenciales incorrectas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        response.put("rol", "ADMIN");
+        response.put("identificacion", admin.getIdentificacion());
+        return ResponseEntity.ok(response);
+    }
+
+    // Para Log In de empresa
+    @PostMapping("/empresa/login")
+    public ResponseEntity<Map<String, Object>> loginEmpresa(@RequestBody Map<String, String> body) {
+        Map<String, Object> response = new HashMap<>();
+        String correo = body.get("correo");
+        String clave = body.get("clave");
+
+        if (correo == null || clave == null) {
+            response.put("error", "Correo y clave son requeridos");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        Empresa empresa = empresaService.login(correo, clave);
+        if (empresa == null) {
+            response.put("error", "Credenciales incorrectas o cuenta no aprobada");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        response.put("rol", "EMPRESA");
+        response.put("correo", empresa.getCorreo());
+        response.put("nombre", empresa.getNombre());
+        return ResponseEntity.ok(response);
+    }
+
+    // Para Log In de oferente
+    @PostMapping("/oferente/login")
+    public ResponseEntity<Map<String, Object>> loginOferente(@RequestBody Map<String, String> body) {
+        Map<String, Object> response = new HashMap<>();
+        String correo = body.get("correo");
+        String clave = body.get("clave");
+
+        if (correo == null || clave == null) {
+            response.put("error", "Correo y clave son requeridos");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        Oferente oferente = oferenteService.login(correo, clave);
+        if (oferente == null) {
+            response.put("error", "Credenciales incorrectas o cuenta no aprobada");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        response.put("rol", "OFERENTE");
+        response.put("correo", oferente.getCorreo());
+        response.put("nombre", oferente.getNombre());
+        response.put("identificacion", oferente.getIdentificacion());
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
 }

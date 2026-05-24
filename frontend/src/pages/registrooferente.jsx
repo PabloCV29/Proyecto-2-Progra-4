@@ -51,7 +51,7 @@ export default function RegistroOferente({ onCancelar }) {
                     texto: data.error || "Error en el registro",
                 });
             }
-        } catch (error) {
+        } catch {
             setMensaje({ tipo: "error", texto: "Error al conectar con el servidor" });
         } finally {
             setLoading(false);
