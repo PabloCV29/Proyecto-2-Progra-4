@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import registroempresa from "./pages/registroempresa.jsx"
+import Registroempresa from "./pages/registroempresa.jsx"
 import "./App.css";
 
 
@@ -61,6 +61,7 @@ function DetalleModal({ puesto, onClose }) {
 export default function App() {
   const { puestos, loading, error, puestoDetalle, fetchUltimosPuestos, fetchDetallePuesto, clearDetalle } = useApp();
   const [navActivo, setNavActivo] = useState("inicio");
+    const [vista, setVista] = useState("inicio");
 
   useEffect(() => {
     fetchUltimosPuestos();
@@ -69,10 +70,13 @@ export default function App() {
   const navLinks = [
     { key: "inicio",    label: "BolsaEmpleo" },
     { key: "buscar",    label: "Buscar" },
-      { key: "empresa", label: "Empresa", accion: () => setVista("registroEmpresa") },
+      { key: "empresa", label: "Empresa" },
     { key: "oferente",  label: "Oferente" },
     { key: "login",     label: "Login" },
   ];
+    if (vista === "registroEmpresa") {
+        return <Registroempresa onCancelar={() => setVista("inicio")} />;
+    }
 
   return (
       <div className="app-wrapper">
@@ -92,7 +96,10 @@ export default function App() {
                   <button
                       key={link.key}
                       className={`nav-link ${navActivo === link.key ? "nav-link--active" : ""}`}
-                      onClick={() => setNavActivo(link.key)}
+                      onClick={() => {
+                          setNavActivo(link.key);
+                          if (link.key === "empresa") setVista("registroEmpresa");
+                      }}
                   >
                     {link.label}
                   </button>

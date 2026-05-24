@@ -17,7 +17,7 @@ public class EmpresaService {
 
     public Empresa login(String correo, String clave){
         Empresa empresa= empresaRepository.findById(correo).orElse(null);
-        if(empresa!=null&&clave.equals(empresa.getClave())&&empresa.isAprobado()){
+        if(empresa!=null&&clave.equals(empresa.getClave())&&empresa.getAprobado()){
             return empresa;
         }
         return null;

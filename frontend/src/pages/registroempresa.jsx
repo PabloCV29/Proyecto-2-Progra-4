@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./registroempresa.module.css";
+
+import "./registroempresa.css";
 
 export default function RegistroEmpresa({ onCancelar }) {  // ← recibir función por prop
     const [formData, setFormData] = useState({
@@ -23,6 +23,9 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
         setLoading(true);
         setMensaje({ tipo: "", texto: "" });
 
+
+        console.log("Enviando:", JSON.stringify(formData));
+
         try {
             const response = await fetch("/api/empresa/registro", {
                 method: "POST",
@@ -31,15 +34,18 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
             });
 
             const data = await response.json();
+            console.log("Respuesta del servidor:", data);
 
             if (response.ok) {
                 setMensaje({
                     tipo: "exito",
                     texto: "Registro exitoso. Esperá la aprobación del administrador.",
                 });
-                setFormData({ nombre: "", correo: "", telefono: "", localizacion: "", clave: "" });
             } else {
-                setMensaje({ tipo: "error", texto: data.error || "Error en el registro" });
+                setMensaje({
+                    tipo: "error",
+                    texto: data.error || JSON.stringify(data), // ← cambiar esto temporalmente
+                });
             }
         } catch (error) {
             setMensaje({ tipo: "error", texto: "Error al conectar con el servidor" });
@@ -99,6 +105,21 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                     </div>
                 </form>
             </div>
+            <footer className="re-footer">
+                <div className="re-footer-inner">
+                    <div className="re-footer-left">
+                        <strong className="re-footer-marca">Bolsa de Empleo</strong>
+                        <span className="re-footer-empresa">Total Soft Inc.</span>
+                    </div>
+                    <div className="re-footer-right">
+                        <span className="re-footer-contacto">Contacto: info@bolsaempleo.local</span>
+                        <span className="re-footer-creditos">
+                Créditos: Mathiw Aguero, Pablo Campos, Juan Pablo Sanchez
+            </span>
+                    </div>
+                </div>
+            </footer>
         </div>
+
     );
 }

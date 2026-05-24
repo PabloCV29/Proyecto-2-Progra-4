@@ -29,7 +29,7 @@ public class Empresa {
     private String localizacion;
     @Column(length = 60)
     private String clave;
-    private boolean aprobado;
+    private Boolean aprobado;
 
     @OneToMany(mappedBy = "empresa")
     @JsonManagedReference
