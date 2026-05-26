@@ -200,7 +200,44 @@ public class Controller {
         return ResponseEntity.ok(response);
     }
 
+    //Para desactivar puesto
+    @PutMapping("/empresa/puestos/{id}/desactivar")
+    public ResponseEntity<Map<String, Object>> desactivarPuesto(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Puesto puesto = puestoService.buscarPuestoPorId(id);
+        if (puesto == null) {
+            response.put("error", "Puesto no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        puestoService.desactivar(id);
+        response.put("mensaje", "Puesto desactivado correctamente");
+        return ResponseEntity.ok(response);
+    }
 
+    //Para puestos x empresa
+    @GetMapping("/empresa/puestos")
+    public ResponseEntity<List<PuestoResumenDTO>> getPuestosPorEmpresa(@RequestParam String correo) {
+        List<PuestoResumenDTO> lista = puestoService.listarPorEmpresa(correo)
+                .stream()
+                .map(PuestoResumenDTO::new)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(lista);
+    }
+
+    //Para activar puesto
+    @PutMapping("/empresa/puestos/{id}/activar")
+    public ResponseEntity<Map<String, Object>> activarPuesto(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Puesto puesto = puestoService.buscarPuestoPorId(id);
+        if (puesto == null) {
+            response.put("error", "Puesto no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        puesto.setActivo(true);
+        puestoService.publicarPuesto(puesto);
+        response.put("mensaje", "Puesto activado correctamente");
+        return ResponseEntity.ok(response);
+    }
 
 
 }

@@ -5,6 +5,7 @@ import RegistroOferentes from "./pages/registrooferente.jsx"
 import "./App.css";
 import Header from "./Header";
 import Login from "./pages/login.jsx";
+import DashboardEmpresa from "./pages/dashboardEmpresa.jsx";
 
 function PuestoCard({ puesto, onVerDetalle }) {
     return (
@@ -37,7 +38,6 @@ function DetalleModal({ puesto, onClose }) {
                     <p>{puesto.descripcion ?? "Sin descripción disponible."}</p>
                 </div>
 
-                {/* ← AQUÍ: Características SOLO en el modal */}
                 {puesto.caracteristicasPuestos && puesto.caracteristicasPuestos.length > 0 && (
                     <div className="modal-caracteristicas">
                         <h4>Requisitos</h4>
@@ -96,28 +96,57 @@ export default function App() {
     }
 
     if (vista === "login") {
-        if (usuario) {
+        if (usuario?.rol === "EMPRESA") {
+            return (
+                <div className="app-wrapper">
+                    <Header navActivo={navActivo} onNavClick={handleNavClick} />
+                    <DashboardEmpresa onCancelar={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }} />
+                </div>
+            );
+        }
+
+        if (usuario?.rol === "ADMIN") {
             return (
                 <div className="app-wrapper">
                     <Header navActivo={navActivo} onNavClick={handleNavClick} />
                     <main className="app-main">
-                        <h1 className="main-titulo">Bienvenido, {usuario.nombre || usuario.identificacion}</h1>
-                        <p style={{ color: "#555", marginBottom: "1rem" }}>Rol: {usuario.rol}</p>
-                        <button className="btn-aplicar" onClick={() => {
-                            logout();
-                            setVista("inicio");
-                            setNavActivo("inicio");
-                        }}>
+                        <h1 className="main-titulo">Bienvenido Admin, {usuario.identificacion}</h1>
+                        <button className="btn-aplicar" onClick={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }}>
                             Cerrar sesión
                         </button>
                     </main>
                 </div>
             );
         }
+
+        if (usuario?.rol === "OFERENTE") {
+            return (
+                <div className="app-wrapper">
+                    <Header navActivo={navActivo} onNavClick={handleNavClick} />
+                    <main className="app-main">
+                        <h1 className="main-titulo">Bienvenido, {usuario.nombre}</h1>
+                        <button className="btn-aplicar" onClick={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }}>
+                            Cerrar sesión
+                        </button>
+                    </main>
+                </div>
+            );
+        }
+
+        // No logueado — mostrar formulario de login
         return (
             <div className="app-wrapper">
                 <Header navActivo={navActivo} onNavClick={handleNavClick} />
                 <Login onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
+            </div>
+        );
+    }
+
+    if (usuario?.rol === "EMPRESA" && vista === "login") {
+        return (
+            <div className="app-wrapper">
+                <Header navActivo={navActivo} onNavClick={handleNavClick} />
+                <DashboardEmpresa onCancelar={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }} />
             </div>
         );
     }
