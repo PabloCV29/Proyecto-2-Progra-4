@@ -239,5 +239,28 @@ public class Controller {
         return ResponseEntity.ok(response);
     }
 
+    // ── ADMIN ────────────────────────────────────────────────────────────────────
+    @GetMapping("/admin/empresas-pendientes")
+    public List<Empresa> empresasPendientes() {
+        return empresaService.listaEsperaAprobacion();
+    }
+
+    @PostMapping("/admin/empresas-pendientes/aprobar")
+    public ResponseEntity<Void> aprobarEmpresa(@RequestParam String correo) {
+        Empresa empresa = empresaService.buscarPorCorreo(correo);
+        if (empresa != null) empresaService.aprobar(empresa);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/admin/oferentes-pendientes")
+    public List<Oferente> oferentesPendientes() {
+        return oferenteService.listaEsperaAprobacion();
+    }
+
+    @PostMapping("/admin/oferentes-pendientes/aprobar")
+    public ResponseEntity<Void> aprobarOferente(@RequestParam String identificacion) {
+        oferenteService.aprobar(identificacion);
+        return ResponseEntity.ok().build();
+    }
 
 }

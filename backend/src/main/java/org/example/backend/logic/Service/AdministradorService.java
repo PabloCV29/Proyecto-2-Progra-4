@@ -13,7 +13,7 @@ public class AdministradorService {
 
     public Administrador login(String id, String password) {
         Administrador admin = administradorRepository.findById(id).orElse(null);
-        if(admin != null& admin.getClave().equals(password)) {
+        if (admin != null && admin.getClave().equals(password)) {
             return admin;
         }
         return null;

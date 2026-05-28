@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
-import Registroempresa from "./pages/registroempresa.jsx"
-import RegistroOferentes from "./pages/registrooferente.jsx"
 import "./App.css";
 import Header from "./Header";
-import Login from "./pages/login.jsx";
-import DashboardEmpresa from "./pages/dashboardEmpresa.jsx";
+import Registroempresa from "./pages/registroempresa.jsx";
+import RegistroOferentes from "./pages/registrooferente.jsx";
+import Login from "./pages/Login.jsx";
+import DashboardAdmin from "./pages/DashboardAdmin.jsx";
+import DashboardOferente from "./pages/DashboardOferente.jsx";
+import DashboardEmpresa from "./pages/DashboardEmpresa.jsx";
 
 function PuestoCard({ puesto, onVerDetalle }) {
     return (
@@ -13,12 +15,7 @@ function PuestoCard({ puesto, onVerDetalle }) {
             <span className="puesto-empresa">{puesto.nombreEmpresa}</span>
             <h3 className="puesto-nombre">{puesto.descripcion}</h3>
             <p className="puesto-salario">₡ {puesto.salario.toLocaleString()}</p>
-
-            {/* Requisitos OCULTOS en la card */}
-
-            <button className="btn-detalle" onClick={() => onVerDetalle(puesto.id)}>
-                Ver detalle
-            </button>
+            <button className="btn-detalle" onClick={() => onVerDetalle(puesto.id)}>Ver detalle</button>
         </div>
     );
 }
@@ -32,13 +29,11 @@ function DetalleModal({ puesto, onClose }) {
                 <span className="puesto-empresa">{puesto.nombreEmpresa}</span>
                 <h2 className="modal-titulo">{puesto.descripcion}</h2>
                 <p className="modal-salario">₡ {puesto.salario.toLocaleString()}</p>
-
                 <div className="modal-descripcion">
                     <h4>Descripción</h4>
                     <p>{puesto.descripcion ?? "Sin descripción disponible."}</p>
                 </div>
-
-                {puesto.caracteristicasPuestos && puesto.caracteristicasPuestos.length > 0 && (
+                {puesto.caracteristicasPuestos?.length > 0 && (
                     <div className="modal-caracteristicas">
                         <h4>Requisitos</h4>
                         <ul>
@@ -51,144 +46,120 @@ function DetalleModal({ puesto, onClose }) {
                         </ul>
                     </div>
                 )}
-
                 <button className="btn-aplicar">Aplicar ahora</button>
             </div>
         </div>
     );
 }
 
-// ─── App principal ────────────────────────────────────────────────────────────
+const getVistaInicial = () => {
+    const rol   = localStorage.getItem("rol");
+    const token = localStorage.getItem("token");
+    if (!token || !rol) return "inicio";
+    if (rol === "ADM") return "dashboardAdmin";
+    if (rol === "EMP") return "dashboardEmpresa";
+    if (rol === "OFE") return "dashboardOferente";
+    return "inicio";
+};
+
 export default function App() {
-  const { puestos, loading, error, puestoDetalle, fetchUltimosPuestos, fetchDetallePuesto, clearDetalle, usuario, logout } = useApp();
-  const [navActivo, setNavActivo] = useState("inicio");
-    const [vista, setVista] = useState("inicio");
+    const {
+        puestos, loading, error,
+        puestoDetalle, fetchUltimosPuestos, fetchDetallePuesto, clearDetalle,
+        logout,
+    } = useApp();
 
-  useEffect(() => {
-    fetchUltimosPuestos();
-  }, [fetchUltimosPuestos]);
+    const [navActivo, setNavActivo] = useState("inicio");
+    const [vista, setVista]         = useState(getVistaInicial);
 
+    useEffect(() => {
+        if (vista === "inicio") fetchUltimosPuestos();
+    }, []);
+
+    const redirigirPorRol = (rol) => {
+        if (rol === "ADM") setVista("dashboardAdmin");
+        else if (rol === "EMP") setVista("dashboardEmpresa");
+        else if (rol === "OFE") setVista("dashboardOferente");
+    };
+
+    const handleLogout = () => {
+        logout();
+        setVista("inicio");
+        setNavActivo("inicio");
+        fetchUltimosPuestos();
+    };
 
     const handleNavClick = (key) => {
         setNavActivo(key);
-        if (key === "empresa") setVista("registroEmpresa");
+        if (key === "empresa")       setVista("registroEmpresa");
         else if (key === "oferente") setVista("registroOferente");
         else if (key === "login")    setVista("login");
-        else setVista("inicio");  // ← cualquier otro link vuelve al inicio
+        else { setVista("inicio"); fetchUltimosPuestos(); }
     };
 
-    if (vista === "registroEmpresa") {
-        return (
-            <div className="app-wrapper">
-                <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                <Registroempresa onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
-            </div>
-        );
-    }
+    // ── Dashboards (sin Header) ───────────────────────────────────────────────
+    if (vista === "dashboardAdmin")    return <DashboardAdmin    onLogout={handleLogout} />;
+    if (vista === "dashboardOferente") return <DashboardOferente onLogout={handleLogout} />;
+    if (vista === "dashboardEmpresa")  return <DashboardEmpresa  onLogout={handleLogout} />;
 
-    if (vista === "registroOferente") {
-        return (
-            <div className="app-wrapper">
-                <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                <RegistroOferentes onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
-            </div>
-        );
-    }
+    // ── Registro Empresa ──────────────────────────────────────────────────────
+    if (vista === "registroEmpresa") return (
+        <div className="app-wrapper">
+            <Header navActivo={navActivo} onNavClick={handleNavClick} />
+            <Registroempresa onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
+        </div>
+    );
 
-    if (vista === "login") {
-        if (usuario?.rol === "EMPRESA") {
-            return (
-                <div className="app-wrapper">
-                    <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                    <DashboardEmpresa onCancelar={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }} />
+    // ── Registro Oferente ─────────────────────────────────────────────────────
+    if (vista === "registroOferente") return (
+        <div className="app-wrapper">
+            <Header navActivo={navActivo} onNavClick={handleNavClick} />
+            <RegistroOferentes onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
+        </div>
+    );
+
+    // ── Login ─────────────────────────────────────────────────────────────────
+    if (vista === "login") return (
+        <div className="app-wrapper">
+            <Header navActivo={navActivo} onNavClick={handleNavClick} />
+            <Login
+                onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }}
+                onLoginExitoso={(rol) => redirigirPorRol(rol)}
+            />
+        </div>
+    );
+
+    // ── Inicio ────────────────────────────────────────────────────────────────
+    return (
+        <div className="app-wrapper">
+            <Header navActivo={navActivo} onNavClick={handleNavClick} />
+            <main className="app-main">
+                <h1 className="main-titulo">Bolsa de Empleo</h1>
+                {loading && <p className="estado-msg">Cargando puestos…</p>}
+                {error   && <p className="estado-msg estado-msg--error">Error: {error}</p>}
+                {!loading && !error && puestos.length === 0 && (
+                    <p className="estado-msg">No hay puestos disponibles en este momento.</p>
+                )}
+                <div className="puestos-grid">
+                    {puestos.map((p) => (
+                        <PuestoCard key={p.id} puesto={p} onVerDetalle={fetchDetallePuesto} />
+                    ))}
                 </div>
-            );
-        }
-
-        if (usuario?.rol === "ADMIN") {
-            return (
-                <div className="app-wrapper">
-                    <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                    <main className="app-main">
-                        <h1 className="main-titulo">Bienvenido Admin, {usuario.identificacion}</h1>
-                        <button className="btn-aplicar" onClick={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }}>
-                            Cerrar sesión
-                        </button>
-                    </main>
-                </div>
-            );
-        }
-
-        if (usuario?.rol === "OFERENTE") {
-            return (
-                <div className="app-wrapper">
-                    <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                    <main className="app-main">
-                        <h1 className="main-titulo">Bienvenido, {usuario.nombre}</h1>
-                        <button className="btn-aplicar" onClick={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }}>
-                            Cerrar sesión
-                        </button>
-                    </main>
-                </div>
-            );
-        }
-
-        // No logueado — mostrar formulario de login
-        return (
-            <div className="app-wrapper">
-                <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                <Login onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }} />
-            </div>
-        );
-    }
-
-    if (usuario?.rol === "EMPRESA" && vista === "login") {
-        return (
-            <div className="app-wrapper">
-                <Header navActivo={navActivo} onNavClick={handleNavClick} />
-                <DashboardEmpresa onCancelar={() => { logout(); setVista("inicio"); setNavActivo("inicio"); }} />
-            </div>
-        );
-    }
-
-        return (
-            <div className="app-wrapper">
-                <Header navActivo={navActivo} onNavClick={handleNavClick}/>
-                {/* ── MAIN ───────────────────────────────────────────────────────── */}
-                <main className="app-main">
-                    <h1 className="main-titulo">Bolsa de Empleo</h1>
-
-                    {loading && <p className="estado-msg">Cargando puestos…</p>}
-                    {error && <p className="estado-msg estado-msg--error">Error: {error}</p>}
-
-                    {!loading && !error && puestos.length === 0 && (
-                        <p className="estado-msg">No hay puestos disponibles en este momento.</p>
-                    )}
-
-                    <div className="puestos-grid">
-                        {puestos.map((p) => (
-                            <PuestoCard key={p.id} puesto={p} onVerDetalle={fetchDetallePuesto}/>
-                        ))}
+            </main>
+            <footer className="app-footer">
+                <div className="footer-divider" />
+                <div className="footer-inner">
+                    <div className="footer-left">
+                        <strong className="footer-marca">Bolsa de Empleo</strong>
+                        <span className="footer-empresa">JPM S.A.</span>
                     </div>
-                </main>
-
-                {/* ── FOOTER ─────────────────────────────────────────────────────── */}
-                <footer className="app-footer">
-                    <div className="footer-divider"/>
-                    <div className="footer-inner">
-                        <div className="footer-left">
-                            <strong className="footer-marca">Bolsa de Empleo</strong>
-                            <span className="footer-empresa">JPM S.A.</span>
-                        </div>
-                        <div className="footer-right">
-                            <span className="footer-contacto">Contacto: info@una</span>
-                            <span className="footer-creditos">Créditos: Santa Ana, Turrubares, San Francisco</span>
-                        </div>
+                    <div className="footer-right">
+                        <span className="footer-contacto">Contacto: info@una</span>
+                        <span className="footer-creditos">Créditos: Santa Ana, Turrubares, San Francisco</span>
                     </div>
-                </footer>
-
-                {/* ── MODAL DETALLE ──────────────────────────────────────────────── */}
-                <DetalleModal puesto={puestoDetalle} onClose={clearDetalle}/>
-            </div>
-        );
-    }
+                </div>
+            </footer>
+            <DetalleModal puesto={puestoDetalle} onClose={clearDetalle} />
+        </div>
+    );
+}

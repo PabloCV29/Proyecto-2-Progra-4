@@ -1,53 +1,56 @@
-import { useState, useEffect } from "react";
-import { useApp } from "../AppProvider";
+import { useState, useEffect, useRef } from "react";
 import "./dashboardEmpresa.css";
 
-export default function DashboardEmpresa({ onCancelar }) {
-    const { usuario } = useApp();
-    const [puestos, setPuestos]   = useState([]);
-    const [loading, setLoading]   = useState(false);
-    const [mensaje, setMensaje]   = useState({ tipo: "", texto: "" });
+export default function DashboardEmpresa({ onLogout }) {
+    const nombre = localStorage.getItem("nombre") || "Empresa";
+    const correo = localStorage.getItem("userId");
+    const token  = localStorage.getItem("token");
 
-    const cargarPuestos = async () => {
-        setLoading(true);
-        try {
-            const res  = await fetch(`/api/empresa/puestos?correo=${usuario.correo}`);
-            const data = await res.json();
-            setPuestos(data);
-        } catch {
-            setMensaje({ tipo: "error", texto: "Error al cargar puestos" });
-        } finally {
-            setLoading(false);
-        }
+    const authHeaders = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
     };
 
-    useEffect(() => {
-        if (!usuario?.correo) return;
+    const [puestos, setPuestos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [mensaje, setMensaje] = useState({ tipo: "", texto: "" });
 
-        const fetchPuestos = async () => {
+    const refetchRef = useRef(null);
+
+    useEffect(() => {
+        let cancelado = false;
+
+        async function cargar() {
+            if (!correo) return;
             setLoading(true);
             try {
-                const res  = await fetch(`/api/empresa/puestos?correo=${usuario.correo}`);
+                const res  = await fetch(`/api/empresa/puestos?correo=${correo}`, { headers: authHeaders });
                 const data = await res.json();
-                setPuestos(data);
+                if (!cancelado) setPuestos(data);
             } catch {
-                setMensaje({ tipo: "error", texto: "Error al cargar puestos" });
+                if (!cancelado) setMensaje({ tipo: "error", texto: "Error al cargar puestos" });
             } finally {
-                setLoading(false);
+                if (!cancelado) setLoading(false);
             }
-        };
+        }
 
-        fetchPuestos();
-    }, [usuario?.correo]);
+        refetchRef.current = cargar;
+        cargar();
+
+        return () => { cancelado = true; };
+    }, []);
 
     const handleDesactivar = async (id) => {
         if (!window.confirm("¿Desactivar este puesto?")) return;
         try {
-            const res  = await fetch(`/api/empresa/puestos/${id}/desactivar`, { method: "PUT" });
+            const res  = await fetch(`/api/empresa/puestos/${id}/desactivar`, {
+                method: "PUT",
+                headers: authHeaders,
+            });
             const data = await res.json();
             if (res.ok) {
                 setMensaje({ tipo: "exito", texto: data.mensaje });
-                cargarPuestos();
+                refetchRef.current?.();
             } else {
                 setMensaje({ tipo: "error", texto: data.error });
             }
@@ -59,11 +62,14 @@ export default function DashboardEmpresa({ onCancelar }) {
     const handleActivar = async (id) => {
         if (!window.confirm("¿Activar este puesto?")) return;
         try {
-            const res  = await fetch(`/api/empresa/puestos/${id}/activar`, { method: "PUT" });
+            const res  = await fetch(`/api/empresa/puestos/${id}/activar`, {
+                method: "PUT",
+                headers: authHeaders,
+            });
             const data = await res.json();
             if (res.ok) {
                 setMensaje({ tipo: "exito", texto: data.mensaje });
-                cargarPuestos();
+                refetchRef.current?.();
             } else {
                 setMensaje({ tipo: "error", texto: data.error });
             }
@@ -76,7 +82,7 @@ export default function DashboardEmpresa({ onCancelar }) {
         <div className="dashboard-empresa-wrapper">
             <div className="dashboard-empresa-container">
                 <h1>Dashboard Empresa</h1>
-                <p className="subtitle">Bienvenido, {usuario?.nombre}</p>
+                <p className="subtitle">Bienvenido, {nombre}</p>
 
                 {mensaje.texto && (
                     <div className={`mensaje mensaje-${mensaje.tipo}`}>
@@ -85,10 +91,10 @@ export default function DashboardEmpresa({ onCancelar }) {
                 )}
 
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-                    <button className="btn btn-secondary" onClick={() => setMensaje({ tipo: "", texto: "" })}>
+                    <button className="btn btn-secondary" onClick={() => refetchRef.current?.()}>
                         Publicar nuevo puesto
                     </button>
-                    <button className="btn btn-primary" onClick={onCancelar}>
+                    <button className="btn btn-primary" onClick={onLogout}>
                         Cerrar sesión
                     </button>
                 </div>
@@ -125,23 +131,15 @@ export default function DashboardEmpresa({ onCancelar }) {
                             </td>
                             <td className="acciones">
                                 {p.activo ? (
-                                    <button
-                                        className="btn-danger"
-                                        onClick={() => handleDesactivar(p.id)}
-                                    >
+                                    <button className="btn-danger" onClick={() => handleDesactivar(p.id)}>
                                         Desactivar
                                     </button>
                                 ) : (
-                                    <button
-                                        className="btn-activar"
-                                        onClick={() => handleActivar(p.id)}
-                                    >
+                                    <button className="btn-activar" onClick={() => handleActivar(p.id)}>
                                         Activar
                                     </button>
                                 )}
-                                <button className="btn-candidatos">
-                                    Candidatos
-                                </button>
+                                <button className="btn-candidatos">Candidatos</button>
                             </td>
                         </tr>
                     ))}
