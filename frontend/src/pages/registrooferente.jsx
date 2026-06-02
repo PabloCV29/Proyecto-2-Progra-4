@@ -125,7 +125,7 @@ export default function RegistroOferente({ onCancelar }) {
                                 onClick={() => setMostrarClave((v) => !v)}
                                 title={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
                             >
-                                {mostrarClave ? "🙈" : "👁️"}
+                                Mostrar
                             </button>
                         </div>
                     </div>

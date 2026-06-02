@@ -111,7 +111,7 @@ export default function RegistroEmpresa({ onCancelar }) {  // ← recibir funci�
                                 onClick={() => setMostrarClave((v) => !v)}
                                 title={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
                             >
-                                {mostrarClave ? "🙈" : "👁️"}
+                                Mostrar
                             </button>
                         </div>
                     </div>
