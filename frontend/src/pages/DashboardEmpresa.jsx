@@ -56,7 +56,7 @@ function PuestoEmpresaCard({ puesto, onToggleEstado, onBuscarCandidatos }) {
     );
 }
 
-function CandidatosPuesto({ puesto, candidatos ,onVolver }) {
+function CandidatosPuesto({ puesto, candidatos ,onVolver, onVerDetalle }) {
     return (
         <div className="emp-seccion">
             <h2 className="emp-seccion__titulo">
@@ -89,9 +89,74 @@ function CandidatosPuesto({ puesto, candidatos ,onVolver }) {
                         <td>
                             <button
                                 className="emp-btn emp-btn--primario"
+                                onClick={() =>
+                                    onVerDetalle(c.identificacion)
+                                }
                             >
                                 Ver detalle
                             </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button
+                className="emp-btn emp-btn--secundario"
+                onClick={onVolver}
+            >
+                Volver
+            </button>
+        </div>
+    );
+}
+
+function DetalleOferente({ oferente, onVolver }) {
+    return (
+        <div className="emp-seccion">
+            <h2 className="emp-seccion__titulo">
+                Detalle de oferente
+            </h2>
+            <div className="emp-detalle-card">
+                <h3>{oferente.nombre} {oferente.apellido}</h3>
+                <p>
+                    <strong>Identificación:</strong>
+                    {" "}
+                    {oferente.identificacion}
+                </p>
+                <p>
+                    <strong>Email:</strong>
+                    {" "}
+                    {oferente.correo}
+                </p>
+                <p>
+                    <strong>Teléfono:</strong>
+                    {" "}
+                    {oferente.telefono}
+                </p>
+                <p>
+                    <strong>Residencia:</strong>
+                    {" "}
+                    {oferente.residencia}
+                </p>
+            </div>
+            <h3 className="emp-subtitulo">
+                Habilidades
+            </h3>
+            <table className="emp-tabla">
+                <thead>
+                <tr>
+                    <th>Característica</th>
+                    <th>Nivel</th>
+                </tr>
+                </thead>
+                <tbody>
+                {oferente.habilidades?.map(h => (
+                    <tr key={h.id}>
+                        <td>
+                            {h.caracteristica?.nombre}
+                        </td>
+                        <td>
+                            {h.nivel}
                         </td>
                     </tr>
                 ))}
@@ -261,6 +326,20 @@ export default function DashboardEmpresa({ onLogout }) {
 
     const [vistaActiva, setVistaActiva] = useState("inicio");
 
+    const [oferenteSeleccionado, setOferenteSeleccionado] = useState(null);
+
+    const cargarDetalleOferente = async (idOferente) => {
+
+        const res = await fetchAuth(
+            `/api/empresa/oferentes/${idOferente}`
+        );
+        if (!res.ok)
+            return;
+        const data = await res.json();
+        setOferenteSeleccionado(data);
+        setVistaActiva("detalleOferente");
+    };
+
     const navLinks = [
         { key: "inicio",          label: "Dashboard" },
         { key: "misPuestos",      label: "Mis puestos" },
@@ -302,8 +381,18 @@ export default function DashboardEmpresa({ onLogout }) {
                     <CandidatosPuesto
                         puesto={puestoSeleccionado}
                         candidatos={candidatos}
+                        onVerDetalle={cargarDetalleOferente}
                         onVolver={() =>
                             setVistaActiva("misPuestos")}
+                    />
+                );
+            case "detalleOferente":
+                return (
+                    <DetalleOferente
+                        oferente={oferenteSeleccionado}
+                        onVolver={() =>
+                            setVistaActiva("candidatos")
+                        }
                     />
                 );
             default:

@@ -6,6 +6,8 @@
     background: #f2f2f2;
     font-family: "Segoe UI", Arial, sans-serif;
     color: #1a1a1a;
+
+    text-align: left;
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -150,6 +152,8 @@
     border-radius: 6px;
     padding: 28px 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,.12);
+
+    text-align: left;
 }
 
 .emp-seccion__titulo {
@@ -448,4 +452,27 @@
 
 .emp-tabla tr:hover {
     background: #fafafa;
+}
+
+.emp-detalle-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.emp-detalle-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.emp-detalle-card p {
+    margin: 0.4rem 0;
+}
+
+.emp-subtitulo {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
 }

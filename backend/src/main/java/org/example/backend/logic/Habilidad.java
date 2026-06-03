@@ -1,5 +1,6 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class Habilidad {
 
     @ManyToOne
     @JoinColumn(name = "oferente_id")
+    @JsonBackReference("oferente-habilidades")
     private Oferente oferente;
 
     @ManyToOne

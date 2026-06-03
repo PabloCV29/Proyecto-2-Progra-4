@@ -3,6 +3,7 @@ package org.example.backend.presentation;
 import org.example.backend.data.DTO.CandidatoPuestoDTO;
 import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.OferenteRepository;
+import org.example.backend.logic.Oferente;
 import org.example.backend.logic.Puesto;
 import org.example.backend.logic.Service.PuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,22 +64,28 @@ public class DashBoardEmpresaController {
         return ResponseEntity.ok(lista);
     }
 
-    /*@GetMapping("/puestos/{id}/candidatos")
-    public ResponseEntity<List<CandidatoPuestoDTO>>
-    buscarCandidatos(@PathVariable Long id){
-
-        return ResponseEntity.ok(
-                puestoService.buscarCandidatos(id)
-        );
-    }*/
 
     @GetMapping("/puestos/{id}/candidatos")
     public ResponseEntity<?> candidatos(@PathVariable Long id) {
-
         System.out.println("Entrando a candidatos");
         System.out.println("ID recibido: " + id);
-
         return ResponseEntity.ok(puestoService.buscarCandidatos(id));
+    }
+
+    @Autowired
+    private OferenteRepository oferenteRepository;
+
+    @GetMapping("/oferentes/{id}")
+    public ResponseEntity<Oferente> obtenerOferente(
+            @PathVariable String id) {
+        Oferente oferente =
+                oferenteRepository.findById(id)
+                        .orElse(null);
+        if(oferente == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(oferente);
     }
 
 }
