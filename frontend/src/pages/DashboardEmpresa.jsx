@@ -6,9 +6,8 @@ const API_BASE = "/api";
 
 // ── Utilidad fetch autenticado ────────────────────────────────────────────────
 function fetchAuth(url, options = {}) {
-    const token = sessionStorage.getItem("usuario")
-        ? JSON.parse(sessionStorage.getItem("usuario")).token
-        : null;
+
+    const token = localStorage.getItem("token");
     return fetch(url, {
         ...options,
         headers: {
@@ -193,8 +192,9 @@ function PublicarPuesto({ correo, onPublicado }) {
 // ── Dashboard principal ───────────────────────────────────────────────────────
 export default function DashboardEmpresa({ onLogout }) {
     const { usuario } = useApp();
-    const correo      = usuario?.correo ?? "";
-    const nombre      = usuario?.nombre ?? "Empresa";
+    console.log(usuario);
+    console.log(usuario?.correo);
+    const correo = usuario?.id ?? "";
 
     const [vistaActiva, setVistaActiva] = useState("inicio");
 

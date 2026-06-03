@@ -3,7 +3,7 @@ import { useApp } from "../AppProvider";
 import "./login.css";
 
 export default function Login({ onCancelar, onLoginExitoso }) {
-    const { login } = useApp();
+    const { actualizarUsuario } = useApp();
     const [formData, setFormData]         = useState({ id: "", clave: "" });
     const [error, setError]               = useState("");
     const [loading, setLoading]           = useState(false);
@@ -39,8 +39,7 @@ export default function Login({ onCancelar, onLoginExitoso }) {
             localStorage.setItem("nombre", data.nombre);
             localStorage.setItem("userId", data.id);
 
-            // Sincronizar AppProvider con los datos recién guardados
-            login(data.rol);
+            actualizarUsuario(data);
 
             onLoginExitoso(data.rol);
         } catch {

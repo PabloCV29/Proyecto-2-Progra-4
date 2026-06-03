@@ -11,11 +11,28 @@ export function AppProvider({ children }) {
 
     // ── AUTH ──────────────────────────────────────────────────────────────────
     const [usuario, setUsuario] = useState(() => {
-        const saved = sessionStorage.getItem("usuario");
-        return saved ? JSON.parse(saved) : null;
+        const token = localStorage.getItem("token");
+
+        if (!token) return null;
+
+        return {
+            token,
+            rol: localStorage.getItem("rol"),
+            nombre: localStorage.getItem("nombre"),
+            id: localStorage.getItem("userId"),
+        };
     });
 
-    const login = useCallback(async (rol, credenciales) => {
+    const actualizarUsuario = useCallback((data) => {
+        setUsuario({
+            token: data.token,
+            rol: data.rol,
+            nombre: data.nombre,
+            id: data.id
+        });
+    }, []);
+
+    /*const login = useCallback(async (rol, credenciales) => {
         const rutas = {
             ADMIN:    "/api/admin/login",
             EMPRESA:  "/api/empresa/login",
@@ -31,10 +48,14 @@ export function AppProvider({ children }) {
         sessionStorage.setItem("usuario", JSON.stringify(data));
         setUsuario(data);
         return data;
-    }, []);
+    }, []);*/
 
     const logout = useCallback(() => {
-        sessionStorage.removeItem("usuario");
+        localStorage.removeItem("token");
+        localStorage.removeItem("rol");
+        localStorage.removeItem("nombre");
+        localStorage.removeItem("userId");
+
         setUsuario(null);
     }, []);
 
@@ -65,7 +86,9 @@ export function AppProvider({ children }) {
         <AppContext.Provider value={{
             puestos, loading, error,
             puestoDetalle, fetchUltimosPuestos, fetchDetallePuesto, clearDetalle,
-            usuario, login, logout,
+            usuario,
+            actualizarUsuario,
+            logout
         }}>
             {children}
         </AppContext.Provider>
