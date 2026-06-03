@@ -89,7 +89,8 @@
 
 .emp-header__correo {
     font-size: 13px;
-    color: #cccccc;
+    color: #1a1a1a;
+    font-weight: 500;
 }
 
 .emp-btn-salir {
@@ -421,4 +422,30 @@
     .emp-bienvenida__acciones { flex-direction: column; }
     .emp-btn { width: 100%; }
     .emp-puestos-grid { grid-template-columns: 1fr; }
+}
+.emp-candidatos-puesto {
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.emp-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.emp-tabla th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #c0392b;
+}
+
+.emp-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.emp-tabla tr:hover {
+    background: #fafafa;
 }

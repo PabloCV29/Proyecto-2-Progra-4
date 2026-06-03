@@ -6,7 +6,6 @@ const API_BASE = "/api";
 
 // ── Utilidad fetch autenticado ────────────────────────────────────────────────
 function fetchAuth(url, options = {}) {
-
     const token = localStorage.getItem("token");
     return fetch(url, {
         ...options,
@@ -18,8 +17,7 @@ function fetchAuth(url, options = {}) {
     });
 }
 
-// ── Tarjeta de puesto (vista empresa) ────────────────────────────────────────
-function PuestoEmpresaCard({ puesto, onToggleEstado }) {
+function PuestoEmpresaCard({ puesto, onToggleEstado, onBuscarCandidatos }) {
     return (
         <div className={`emp-puesto-card ${!puesto.activo ? "emp-puesto-card--inactivo" : ""}`}>
             <div className="emp-puesto-card__header">
@@ -40,6 +38,15 @@ function PuestoEmpresaCard({ puesto, onToggleEstado }) {
                 </ul>
             )}
             <button
+                className="emp-btn emp-btn--primario"
+                onClick={() => {
+                    console.log("CLICK", puesto);
+                    onBuscarCandidatos(puesto);
+                }}
+            >
+                Buscar candidatos
+            </button>
+            <button
                 className={`emp-btn ${puesto.activo ? "emp-btn--secundario" : "emp-btn--primario"}`}
                 onClick={() => onToggleEstado(puesto)}
             >
@@ -49,8 +56,59 @@ function PuestoEmpresaCard({ puesto, onToggleEstado }) {
     );
 }
 
+function CandidatosPuesto({ puesto, candidatos ,onVolver }) {
+    return (
+        <div className="emp-seccion">
+            <h2 className="emp-seccion__titulo">
+                Candidatos para el puesto
+            </h2>
+            <p className="emp-candidatos-puesto">
+                <strong>Puesto:</strong> {puesto.descripcion}
+            </p>
+            <table className="emp-tabla">
+                <thead>
+                <tr>
+                    <th>Oferente</th>
+                    <th>Requisitos cumplidos</th>
+                    <th>% Coincidencia</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {candidatos.map(c => (
+                    <tr key={c.identificacion}>
+                        <td>{c.nombre}</td>
+                        <td>
+                            {c.requisitosCumplidos}
+                            /
+                            {c.totalRequisitos}
+                        </td>
+                        <td>
+                            {c.porcentaje.toFixed(2)}%
+                        </td>
+                        <td>
+                            <button
+                                className="emp-btn emp-btn--primario"
+                            >
+                                Ver detalle
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button
+                className="emp-btn emp-btn--secundario"
+                onClick={onVolver}
+            >
+                Volver
+            </button>
+        </div>
+    );
+}
+
 // ── Vista: Mis Puestos ────────────────────────────────────────────────────────
-function MisPuestos({ correo }) {
+function MisPuestos({ correo, onBuscarCandidatos }) {
     const [puestos, setPuestos]   = useState([]);
     const [loading, setLoading]   = useState(false);
     const [mensaje, setMensaje]   = useState(null);
@@ -83,7 +141,7 @@ function MisPuestos({ correo }) {
         }
         setTimeout(() => setMensaje(null), 3000);
     };
-
+    console.log("onBuscarCandidatos recibido:", onBuscarCandidatos);
     return (
         <div className="emp-seccion">
             <h2 className="emp-seccion__titulo">Mis puestos</h2>
@@ -98,7 +156,11 @@ function MisPuestos({ correo }) {
             )}
             <div className="emp-puestos-grid">
                 {puestos.map((p) => (
-                    <PuestoEmpresaCard key={p.id} puesto={p} onToggleEstado={handleToggle} />
+                    <PuestoEmpresaCard key={p.id}
+                                       puesto={p}
+                                       onToggleEstado={handleToggle}
+                                       onBuscarCandidatos={onBuscarCandidatos}
+                    />
                 ))}
             </div>
         </div>
@@ -191,9 +253,10 @@ function PublicarPuesto({ correo, onPublicado }) {
 
 // ── Dashboard principal ───────────────────────────────────────────────────────
 export default function DashboardEmpresa({ onLogout }) {
+    const [puestoSeleccionado, setPuestoSeleccionado] = useState(null);
+    const [candidatos,setCandidatos] = useState([]);
+
     const { usuario } = useApp();
-    console.log(usuario);
-    console.log(usuario?.correo);
     const correo = usuario?.id ?? "";
 
     const [vistaActiva, setVistaActiva] = useState("inicio");
@@ -204,15 +267,43 @@ export default function DashboardEmpresa({ onLogout }) {
         { key: "publicarPuesto",  label: "Publicar puesto" },
     ];
 
+    const cargarCandidatos = async (puesto) => {
+
+        const res = await fetchAuth(
+            `/api/empresa/puestos/${puesto.id}/candidatos`
+        );
+
+        if(!res.ok)
+            return;
+
+        const data = await res.json();
+
+        setPuestoSeleccionado(puesto);
+        setCandidatos(data);
+
+        setVistaActiva("candidatos");
+    };
+
     const renderVista = () => {
         switch (vistaActiva) {
             case "misPuestos":
-                return <MisPuestos correo={correo} />;
+                return <MisPuestos correo={correo}
+                                   onBuscarCandidatos={cargarCandidatos}
+                />;
             case "publicarPuesto":
                 return (
                     <PublicarPuesto
                         correo={correo}
                         onPublicado={() => setVistaActiva("misPuestos")}
+                    />
+                );
+            case "candidatos":
+                return (
+                    <CandidatosPuesto
+                        puesto={puestoSeleccionado}
+                        candidatos={candidatos}
+                        onVolver={() =>
+                            setVistaActiva("misPuestos")}
                     />
                 );
             default:
