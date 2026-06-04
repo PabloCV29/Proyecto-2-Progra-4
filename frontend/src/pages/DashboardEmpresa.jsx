@@ -4,7 +4,6 @@ import "./DashboardEmpresa.css";
 
 const API_BASE = "/api";
 
-// ── Utilidad fetch autenticado ────────────────────────────────────────────────
 function fetchAuth(url, options = {}) {
     const token = localStorage.getItem("token");
     return fetch(url, {
@@ -191,7 +190,7 @@ function MisPuestos({ correo, onBuscarCandidatos }) {
         }
     }, [correo]);
 
-    useEffect(() => { cargarPuestos(); }, [cargarPuestos]);
+    useEffect(() => {cargarPuestos();}, [cargarPuestos]);
 
 
     const handleToggle = async (puesto) => {
@@ -238,6 +237,69 @@ function PublicarPuesto({ correo, onPublicado }) {
     const [loading, setLoading] = useState(false);
     const [mensaje, setMensaje] = useState(null);
 
+    const [raices, setRaices] = useState([]);
+    const [actualId, setActualId] = useState(null);
+    const [hijos, setHijos] = useState([]);
+
+    const [nivelCaracteristica, setNivelCaracteristica] = useState(1);
+    const [caracteristicaId, setCaracteristicaId] = useState("");
+
+    const [caracteristicasPuesto, setCaracteristicasPuesto] = useState([]);
+
+    useEffect(() => {
+        fetch("/api/caracteristicas/raices")
+            .then(r => r.json())
+            .then(setRaices);
+    }, []);
+
+    const entrarEnNodo = (nodo) => {
+        setActualId(nodo.id);
+        setHijos(nodo.hijos ?? []);
+        setCaracteristicaId("");
+    };
+
+    const volverARaices = () => {
+        setActualId(null);
+        setHijos([]);
+        setCaracteristicaId("");
+    };
+
+    const agregarCaracteristica = () => {
+        if (!caracteristicaId)
+            return;
+        const existe =
+            caracteristicasPuesto.some(
+                c => c.caracteristicaId === Number(caracteristicaId)
+            );
+        if (existe) {
+            setMensaje({
+                tipo: "error",
+                texto: "La característica ya fue agregada."
+            });
+            return;
+        }
+        let nombre = "";
+        hijos.forEach(h => {
+            if (h.id === Number(caracteristicaId))
+                nombre = h.nombre;
+        });
+        setCaracteristicasPuesto(prev => [
+            ...prev,
+            {
+                caracteristicaId: Number(caracteristicaId),
+                nombre,
+                nivel: nivelCaracteristica
+            }
+        ]);
+        setCaracteristicaId("");
+    };
+
+    const eliminarCaracteristica = (id) => {
+        setCaracteristicasPuesto(prev =>
+            prev.filter(c => c.caracteristicaId !== id)
+        );
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
@@ -245,15 +307,26 @@ function PublicarPuesto({ correo, onPublicado }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (caracteristicasPuesto.length === 0) {
+            setMensaje({
+                tipo: "error",
+                texto: "Debe agregar al menos una caracteristica."
+            });
+            return;
+        }
         setLoading(true);
         setMensaje(null);
         try {
             const body = {
                 descripcion: form.descripcion,
-                salario:     parseFloat(form.salario),
-                publico:     form.publico,
-                activo:      true,
-                empresa:     { correo },
+                salario: parseFloat(form.salario),
+                publico: form.publico,
+                empresaCorreo: correo,
+                caracteristicas:
+                    caracteristicasPuesto.map(c => ({
+                        caracteristicaId: c.caracteristicaId,
+                        nivel: c.nivel
+                    }))
             };
             const res  = await fetchAuth(`${API_BASE}/empresa/puestos`, {
                 method: "POST",
@@ -263,6 +336,11 @@ function PublicarPuesto({ correo, onPublicado }) {
             if (res.ok) {
                 setMensaje({ tipo: "exito", texto: "Puesto publicado correctamente." });
                 setForm({ descripcion: "", salario: "", publico: true });
+                setCaracteristicasPuesto([]);
+                setCaracteristicaId("");
+                setNivelCaracteristica(1);
+                setActualId(null);
+                setHijos([]);
                 onPublicado?.();
             } else {
                 setMensaje({ tipo: "error", texto: data.error || "Error al publicar." });
@@ -307,6 +385,152 @@ function PublicarPuesto({ correo, onPublicado }) {
                         checked={form.publico} onChange={handleChange}
                     />
                     <label htmlFor="publico">Visible públicamente</label>
+                </div>
+                <hr className="emp-separador" />
+                <h3 className="emp-subtitulo">
+                    Características requeridas
+                </h3>
+                {caracteristicasPuesto.length > 0 && (
+                    <table className="emp-tabla">
+                        <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Nivel</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {caracteristicasPuesto.map((c) => (
+                            <tr key={c.caracteristicaId}>
+                                <td>{c.nombre}</td>
+                                <td>
+                                    {"★".repeat(c.nivel)}
+                                    {"☆".repeat(5 - c.nivel)}
+                                </td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        className="emp-btn-eliminar"
+                                        onClick={() =>
+                                            eliminarCaracteristica(
+                                                c.caracteristicaId
+                                            )
+                                        }
+                                    >
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+                <div className="emp-arbol">
+                    {actualId === null ? (
+                        <>
+                            <p className="emp-arbol__label">
+                                Seleccione una categoría:
+                            </p>
+                            {raices.map((r) => (
+                                <button
+                                    type="button"
+                                    key={r.id}
+                                    className="emp-arbol__nodo"
+                                    onClick={() => entrarEnNodo(r)}
+                                >
+                                    {r.nombre} ▸
+                                </button>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                className="emp-arbol__volver"
+                                onClick={volverARaices}
+                            >
+                                ← Volver a categorías
+                            </button>
+                            <p className="emp-arbol__label">
+                                Seleccione una subcategoría:
+                            </p>
+                            {hijos.length === 0 && (
+                                <p className="emp-estado">
+                                    No hay subcategorías.
+                                </p>
+                            )}
+                            {hijos.map((h) => (
+                                <button
+                                    type="button"
+                                    key={h.id}
+                                    className={`emp-arbol__nodo ${
+                                        caracteristicaId == h.id
+                                            ? "emp-arbol__nodo--activo"
+                                            : ""
+                                    }`}
+                                    onClick={() => {
+
+                                        if (h.hijos?.length > 0) {
+                                            entrarEnNodo(h);
+                                        } else {
+                                            setCaracteristicaId(
+                                                String(h.id)
+                                            );
+                                        }
+                                    }}
+                                >
+                                    {h.nombre}
+                                    {h.hijos?.length > 0 ? " ▸" : ""}
+                                </button>
+                            ))}
+                        </>
+                    )}
+                </div>
+                <div className="emp-caracteristica-form">
+                    <label>
+                        Característica seleccionada
+                    </label>
+                    <span className="emp-caracteristica-sel">
+                        {caracteristicaId
+                            ? (
+                                hijos.find(
+                                    h =>
+                                        h.id ==
+                                        caracteristicaId
+                                )?.nombre
+                                ?? "Seleccionada"
+                            )
+                            : "Ninguna"}
+                    </span>
+                    <label>
+                        Nivel requerido
+                    </label>
+                    <div className="emp-estrellas">
+                        {[1,2,3,4,5].map((n) => (
+                            <button
+                                key={n}
+                                type="button"
+                                className={`emp-estrella ${
+                                    nivelCaracteristica >= n
+                                        ? "emp-estrella--activa"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    setNivelCaracteristica(n)
+                                }
+                            >
+                                ★
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        type="button"
+                        className="emp-btn emp-btn--primario"
+                        disabled={!caracteristicaId}
+                        onClick={agregarCaracteristica}
+                    >
+                        Agregar característica
+                    </button>
                 </div>
                 <button type="submit" className="emp-btn emp-btn--primario" disabled={loading}>
                     {loading ? "Publicando…" : "Publicar puesto"}

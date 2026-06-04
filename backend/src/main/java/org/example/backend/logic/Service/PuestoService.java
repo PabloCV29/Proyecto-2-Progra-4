@@ -1,13 +1,13 @@
 package org.example.backend.logic.Service;
 
+import org.example.backend.data.*;
 import org.example.backend.data.DTO.CandidatoPuestoDTO;
-import org.example.backend.data.OferenteRepository;
-import org.example.backend.data.PuestoRepository;
-import org.example.backend.logic.CaracteristicasPuesto;
-import org.example.backend.logic.Oferente;
-import org.example.backend.logic.Puesto;
+import org.example.backend.data.DTO.CaracteristicaPuestoDTO;
+import org.example.backend.data.DTO.PublicarPuestoDTO;
+import org.example.backend.logic.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +17,14 @@ public class PuestoService {
     private PuestoRepository puestoRepository;
     @Autowired
     private OferenteRepository oferenteRepository;
+    @Autowired
+    private CaracteristicasRepository caracteristicasRepository;
+
+    @Autowired
+    private CaracteristicasPuestoRepository caracteristicasPuestoRepository;
+
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
     public List<Puesto> list5Ultimos(){
         return puestoRepository.findTop5ByPublicoTrueAndActivoTrueOrderByIdDesc();
@@ -94,11 +102,46 @@ public class PuestoService {
                             porcentaje
                     );
                 })
-                //.filter(c -> c.getRequisitosCumplidos() > 0)
+                .filter(c -> c.getRequisitosCumplidos() > 0)
                 .sorted((a,b) ->
                         Double.compare(
                                 b.getPorcentaje(),
                                 a.getPorcentaje()))
                 .toList();
+    }
+
+    @Transactional
+    public void publicarPuestoCompleto(PublicarPuestoDTO dto) {
+
+        Empresa empresa =
+                empresaRepository.findById(dto.getEmpresaCorreo())
+                        .orElseThrow();
+
+        Puesto puesto = new Puesto();
+
+        puesto.setDescripcion(dto.getDescripcion());
+        puesto.setSalario(dto.getSalario());
+        puesto.setPublico(dto.isPublico());
+        puesto.setActivo(true);
+        puesto.setEmpresa(empresa);
+
+        puesto = puestoRepository.save(puesto);
+
+        for (CaracteristicaPuestoDTO c : dto.getCaracteristicas()) {
+
+            Caracteristicas caracteristica =
+                    caracteristicasRepository
+                            .findById(c.getCaracteristicaId())
+                            .orElseThrow();
+
+            CaracteristicasPuesto cp =
+                    new CaracteristicasPuesto();
+
+            cp.setPuesto(puesto);
+            cp.setCaracteristicas(caracteristica);
+            cp.setNivelRequerido(c.getNivel());
+
+            caracteristicasPuestoRepository.save(cp);
+        }
     }
 }

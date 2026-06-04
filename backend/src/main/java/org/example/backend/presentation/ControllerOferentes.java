@@ -1,4 +1,4 @@
-package org.example.backend;
+package org.example.backend.presentation;
 
 import org.example.backend.data.DTO.HabilidadDTO;
 import org.example.backend.logic.*;

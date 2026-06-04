@@ -476,3 +476,108 @@
     font-size: 1.1rem;
     font-weight: 600;
 }
+
+/* ───────────────────────────────────────────── */
+/* Características del puesto */
+/* ───────────────────────────────────────────── */
+
+.emp-separador {
+    margin: 25px 0;
+    border: none;
+    border-top: 1px solid #dddddd;
+}
+
+.emp-arbol {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.emp-arbol__label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.emp-arbol__nodo {
+    padding: 10px 12px;
+    text-align: left;
+    color: #1a1a1a;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.emp-arbol__nodo:hover {
+    border-color: #c0392b;
+    background: #fff6f5;
+}
+
+.emp-arbol__nodo--activo {
+    border-color: #c0392b;
+    background: #fdecea;
+    font-weight: 600;
+}
+
+.emp-arbol__volver {
+    align-self: flex-start;
+    border: none;
+    background: none;
+    color: #c0392b;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.emp-caracteristica-form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.emp-caracteristica-form label {
+    text-align: left;
+    font-weight: 600;
+}
+
+.emp-caracteristica-sel {
+    text-align: left;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #dddddd;
+}
+
+.emp-estrellas {
+    display: flex;
+    gap: 6px;
+}
+
+.emp-estrella {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 24px;
+    color: #cccccc;
+}
+
+.emp-estrella--activa {
+    color: #f39c12;
+}
+
+.emp-btn-eliminar {
+    border: none;
+    background: #c0392b;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.emp-btn-eliminar:hover {
+    background: #a93226;
+}

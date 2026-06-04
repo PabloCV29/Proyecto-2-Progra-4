@@ -1,6 +1,7 @@
 package org.example.backend.presentation;
 
 import org.example.backend.data.DTO.CandidatoPuestoDTO;
+import org.example.backend.data.DTO.PublicarPuestoDTO;
 import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.OferenteRepository;
 import org.example.backend.logic.Oferente;
@@ -24,7 +25,6 @@ public class DashBoardEmpresaController {
     @Autowired
     private PuestoService puestoService;
 
-    //Para activar puesto
     @PutMapping("/puestos/{id}/activar")
     public ResponseEntity<Map<String, Object>> activarPuesto(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -39,18 +39,30 @@ public class DashBoardEmpresaController {
         return ResponseEntity.ok(response);
     }
 
-    // Publicar nuevo puesto
-    @PostMapping("/puestos")
-    public ResponseEntity<Map<String, Object>> publicarPuesto(@RequestBody Puesto puesto) {
+    @PutMapping("/puestos/{id}/desactivar")
+    public ResponseEntity<Map<String, Object>> desactivarPuesto(
+            @PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
-        try {
-            puestoService.publicarPuesto(puesto);
-            response.put("mensaje", "Puesto publicado correctamente.");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            response.put("error", "Error al publicar: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        Puesto puesto = puestoService.buscarPuestoPorId(id);
+        if (puesto == null) {
+            response.put("error", "Puesto no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
+        puestoService.desactivar(id);
+        response.put("mensaje", "Puesto desactivado correctamente");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/puestos")
+    public ResponseEntity<?> publicarPuesto(
+            @RequestBody PublicarPuestoDTO dto) {
+        puestoService.publicarPuestoCompleto(dto);
+        return ResponseEntity.ok(
+                Map.of(
+                        "mensaje",
+                        "Puesto publicado correctamente"
+                )
+        );
     }
 
     @GetMapping("/puestos")

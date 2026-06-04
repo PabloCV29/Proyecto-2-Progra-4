@@ -1,11 +1,15 @@
 package org.example.backend.data.DTO;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.backend.logic.Caracteristicas;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class CaracteristicaDTO {
 
     private Long id;
