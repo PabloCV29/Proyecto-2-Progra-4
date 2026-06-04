@@ -96,6 +96,7 @@ export default function App() {
         else if (key === "oferente") setVista("registroOferente");
         else if (key === "login")    setVista("login");
         else if (key === "buscar")   setVista("buscarPuestos");
+        else if (key === "logout") { handleLogout(); }
         else { setVista("inicio"); fetchUltimosPuestos(); }
     };
 

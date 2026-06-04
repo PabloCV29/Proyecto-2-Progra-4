@@ -4,6 +4,7 @@ export function usePendientes() {
     const [empresasPendientes, setEmpresasPendientes] = useState([]);
     const [oferentesPendientes, setOferentesPendientes] = useState([]);
     const refetchRef = useRef(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
         let cancelado = false;
@@ -25,8 +26,8 @@ export function usePendientes() {
                     setEmpresasPendientes(empresas);
                     setOferentesPendientes(oferentes);
                 }
-            } catch {
-                // silencio
+            } catch(err) {
+                if (!cancelado) setErrorMsg(err.message);
             }
         }
 
@@ -39,6 +40,7 @@ export function usePendientes() {
     return {
         empresasPendientes,
         oferentesPendientes,
+        errorMsg,           // ← agregar esta línea
         stats: {
             empresasPendientes: empresasPendientes.length,
             oferentesPendientes: oferentesPendientes.length,

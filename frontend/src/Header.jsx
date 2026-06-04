@@ -1,12 +1,14 @@
 import "./App.css";
+import { useApp } from "./AppProvider";
 
 export default function Header({ navActivo, onNavClick }) {
+    const { usuario, logout } = useApp();
+
     const navLinks = [
-        { key: "inicio",    label: "BolsaEmpleo" },
-        { key: "buscar",    label: "Buscar" },
-        { key: "empresa",   label: "Empresa" },
-        { key: "oferente",  label: "Oferente" },
-        { key: "login",     label: "Login" },
+        { key: "inicio",   label: "BolsaEmpleo" },
+        { key: "buscar",   label: "Buscar" },
+        { key: "empresa",  label: "Empresa" },
+        { key: "oferente", label: "Oferente" },
     ];
 
     return (
@@ -29,6 +31,28 @@ export default function Header({ navActivo, onNavClick }) {
                             {link.label}
                         </button>
                     ))}
+
+                    {/* Si no hay sesión, mostrar Login */}
+                    {!usuario && (
+                        <button
+                            className={`nav-link ${navActivo === "login" ? "nav-link--active" : ""}`}
+                            onClick={() => onNavClick("login")}
+                        >
+                            Login
+                        </button>
+                    )}
+
+                    {/* Si hay sesión, mostrar nombre + cerrar sesión */}
+                    {usuario && (
+                        <>
+                            <span style={{ fontSize: "14px", color: "#555", alignSelf: "center" }}>
+                                Hola, {usuario.nombre}
+                            </span>
+                            <button className="nav-link" onClick={() => onNavClick("logout")}>
+                                Cerrar sesión
+                            </button>
+                        </>
+                    )}
                 </nav>
             </div>
             <div className="header-divider" />

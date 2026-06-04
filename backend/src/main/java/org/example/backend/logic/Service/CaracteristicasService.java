@@ -31,4 +31,20 @@ public class CaracteristicasService {
     public List<Caracteristicas> buscarPorPadre(Long padreId){
         return caracteristicaRepository.findByPadreId(padreId);
     }
+
+    public void eliminar(Long id) {
+        Caracteristicas c = caracteristicaRepository.findById(id).orElse(null);
+        if (c == null) throw new IllegalArgumentException("Característica no encontrada");
+        if (c.getHijos() != null && !c.getHijos().isEmpty()) {
+            throw new IllegalStateException("No se puede eliminar: tiene subcategorías. Eliminá primero las hijas.");
+        }
+        caracteristicaRepository.deleteById(id);
+    }
+
+    public void actualizar(Long id, String nuevoNombre) {
+        Caracteristicas c = caracteristicaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Característica no encontrada"));
+        c.setNombre(nuevoNombre);
+        caracteristicaRepository.save(c);
+    }
 }
