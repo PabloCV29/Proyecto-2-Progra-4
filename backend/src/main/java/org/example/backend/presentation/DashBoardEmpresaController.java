@@ -1,6 +1,9 @@
 package org.example.backend.presentation;
 
+import org.example.backend.data.DTO.CandidatoPuestoDTO;
 import org.example.backend.data.DTO.PuestoResumenDTO;
+import org.example.backend.data.OferenteRepository;
+import org.example.backend.logic.Oferente;
 import org.example.backend.logic.Puesto;
 import org.example.backend.logic.Service.PuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,25 +23,6 @@ public class DashBoardEmpresaController {
 
     @Autowired
     private PuestoService puestoService;
-
-    /*//Para puestos x empresa
-    @GetMapping("/puestos")
-    public ResponseEntity<List<PuestoResumenDTO>> getPuestosPorEmpresa(@RequestParam String correo) {
-        List<PuestoResumenDTO> lista = puestoService.listarPorEmpresa(correo)
-                .stream()
-                .map(PuestoResumenDTO::new)
-                .collect(java.util.stream.Collectors.toList());
-        return ResponseEntity.ok(lista);
-    }*/
-
-    /*@GetMapping("/puestos")
-    public ResponseEntity<List<PuestoResumenDTO>> getPuestosPorEmpresa(@RequestParam String correo) {
-        List<PuestoResumenDTO> lista = puestoService.listarPorEmpresa(correo)
-                .stream()
-                .map(PuestoResumenDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(lista);
-    }*/
 
     //Para activar puesto
     @PutMapping("/puestos/{id}/activar")
@@ -79,4 +63,29 @@ public class DashBoardEmpresaController {
         System.out.println("Puestos encontrados: " + lista.size()); // ← log temporal
         return ResponseEntity.ok(lista);
     }
+
+
+    @GetMapping("/puestos/{id}/candidatos")
+    public ResponseEntity<?> candidatos(@PathVariable Long id) {
+        System.out.println("Entrando a candidatos");
+        System.out.println("ID recibido: " + id);
+        return ResponseEntity.ok(puestoService.buscarCandidatos(id));
+    }
+
+    @Autowired
+    private OferenteRepository oferenteRepository;
+
+    @GetMapping("/oferentes/{id}")
+    public ResponseEntity<Oferente> obtenerOferente(
+            @PathVariable String id) {
+        Oferente oferente =
+                oferenteRepository.findById(id)
+                        .orElse(null);
+        if(oferente == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(oferente);
+    }
+
 }

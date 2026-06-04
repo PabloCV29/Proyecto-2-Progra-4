@@ -6,6 +6,8 @@
     background: #f2f2f2;
     font-family: "Segoe UI", Arial, sans-serif;
     color: #1a1a1a;
+
+    text-align: left;
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -89,7 +91,8 @@
 
 .emp-header__correo {
     font-size: 13px;
-    color: #cccccc;
+    color: #1a1a1a;
+    font-weight: 500;
 }
 
 .emp-btn-salir {
@@ -149,6 +152,8 @@
     border-radius: 6px;
     padding: 28px 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,.12);
+
+    text-align: left;
 }
 
 .emp-seccion__titulo {
@@ -421,4 +426,53 @@
     .emp-bienvenida__acciones { flex-direction: column; }
     .emp-btn { width: 100%; }
     .emp-puestos-grid { grid-template-columns: 1fr; }
+}
+.emp-candidatos-puesto {
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.emp-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.emp-tabla th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #c0392b;
+}
+
+.emp-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.emp-tabla tr:hover {
+    background: #fafafa;
+}
+
+.emp-detalle-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.emp-detalle-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.emp-detalle-card p {
+    margin: 0.4rem 0;
+}
+
+.emp-subtitulo {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
 }

@@ -1,5 +1,6 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -37,5 +38,6 @@ public class Oferente {
     private String curriculum;
 
     @OneToMany(mappedBy = "oferente")
+    @JsonManagedReference("oferente-habilidades")
     private List<Habilidad> habilidades;
 }

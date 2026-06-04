@@ -6,7 +6,6 @@ const API_BASE = "/api";
 
 // ── Utilidad fetch autenticado ────────────────────────────────────────────────
 function fetchAuth(url, options = {}) {
-
     const token = localStorage.getItem("token");
     return fetch(url, {
         ...options,
@@ -18,8 +17,7 @@ function fetchAuth(url, options = {}) {
     });
 }
 
-// ── Tarjeta de puesto (vista empresa) ────────────────────────────────────────
-function PuestoEmpresaCard({ puesto, onToggleEstado }) {
+function PuestoEmpresaCard({ puesto, onToggleEstado, onBuscarCandidatos }) {
     return (
         <div className={`emp-puesto-card ${!puesto.activo ? "emp-puesto-card--inactivo" : ""}`}>
             <div className="emp-puesto-card__header">
@@ -40,6 +38,15 @@ function PuestoEmpresaCard({ puesto, onToggleEstado }) {
                 </ul>
             )}
             <button
+                className="emp-btn emp-btn--primario"
+                onClick={() => {
+                    console.log("CLICK", puesto);
+                    onBuscarCandidatos(puesto);
+                }}
+            >
+                Buscar candidatos
+            </button>
+            <button
                 className={`emp-btn ${puesto.activo ? "emp-btn--secundario" : "emp-btn--primario"}`}
                 onClick={() => onToggleEstado(puesto)}
             >
@@ -49,8 +56,124 @@ function PuestoEmpresaCard({ puesto, onToggleEstado }) {
     );
 }
 
+function CandidatosPuesto({ puesto, candidatos ,onVolver, onVerDetalle }) {
+    return (
+        <div className="emp-seccion">
+            <h2 className="emp-seccion__titulo">
+                Candidatos para el puesto
+            </h2>
+            <p className="emp-candidatos-puesto">
+                <strong>Puesto:</strong> {puesto.descripcion}
+            </p>
+            <table className="emp-tabla">
+                <thead>
+                <tr>
+                    <th>Oferente</th>
+                    <th>Requisitos cumplidos</th>
+                    <th>% Coincidencia</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {candidatos.map(c => (
+                    <tr key={c.identificacion}>
+                        <td>{c.nombre}</td>
+                        <td>
+                            {c.requisitosCumplidos}
+                            /
+                            {c.totalRequisitos}
+                        </td>
+                        <td>
+                            {c.porcentaje.toFixed(2)}%
+                        </td>
+                        <td>
+                            <button
+                                className="emp-btn emp-btn--primario"
+                                onClick={() =>
+                                    onVerDetalle(c.identificacion)
+                                }
+                            >
+                                Ver detalle
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button
+                className="emp-btn emp-btn--secundario"
+                onClick={onVolver}
+            >
+                Volver
+            </button>
+        </div>
+    );
+}
+
+function DetalleOferente({ oferente, onVolver }) {
+    return (
+        <div className="emp-seccion">
+            <h2 className="emp-seccion__titulo">
+                Detalle de oferente
+            </h2>
+            <div className="emp-detalle-card">
+                <h3>{oferente.nombre} {oferente.apellido}</h3>
+                <p>
+                    <strong>Identificación:</strong>
+                    {" "}
+                    {oferente.identificacion}
+                </p>
+                <p>
+                    <strong>Email:</strong>
+                    {" "}
+                    {oferente.correo}
+                </p>
+                <p>
+                    <strong>Teléfono:</strong>
+                    {" "}
+                    {oferente.telefono}
+                </p>
+                <p>
+                    <strong>Residencia:</strong>
+                    {" "}
+                    {oferente.residencia}
+                </p>
+            </div>
+            <h3 className="emp-subtitulo">
+                Habilidades
+            </h3>
+            <table className="emp-tabla">
+                <thead>
+                <tr>
+                    <th>Característica</th>
+                    <th>Nivel</th>
+                </tr>
+                </thead>
+                <tbody>
+                {oferente.habilidades?.map(h => (
+                    <tr key={h.id}>
+                        <td>
+                            {h.caracteristica?.nombre}
+                        </td>
+                        <td>
+                            {h.nivel}
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button
+                className="emp-btn emp-btn--secundario"
+                onClick={onVolver}
+            >
+                Volver
+            </button>
+        </div>
+    );
+}
+
 // ── Vista: Mis Puestos ────────────────────────────────────────────────────────
-function MisPuestos({ correo }) {
+function MisPuestos({ correo, onBuscarCandidatos }) {
     const [puestos, setPuestos]   = useState([]);
     const [loading, setLoading]   = useState(false);
     const [mensaje, setMensaje]   = useState(null);
@@ -83,7 +206,7 @@ function MisPuestos({ correo }) {
         }
         setTimeout(() => setMensaje(null), 3000);
     };
-
+    console.log("onBuscarCandidatos recibido:", onBuscarCandidatos);
     return (
         <div className="emp-seccion">
             <h2 className="emp-seccion__titulo">Mis puestos</h2>
@@ -98,7 +221,11 @@ function MisPuestos({ correo }) {
             )}
             <div className="emp-puestos-grid">
                 {puestos.map((p) => (
-                    <PuestoEmpresaCard key={p.id} puesto={p} onToggleEstado={handleToggle} />
+                    <PuestoEmpresaCard key={p.id}
+                                       puesto={p}
+                                       onToggleEstado={handleToggle}
+                                       onBuscarCandidatos={onBuscarCandidatos}
+                    />
                 ))}
             </div>
         </div>
@@ -191,12 +318,27 @@ function PublicarPuesto({ correo, onPublicado }) {
 
 // ── Dashboard principal ───────────────────────────────────────────────────────
 export default function DashboardEmpresa({ onLogout }) {
+    const [puestoSeleccionado, setPuestoSeleccionado] = useState(null);
+    const [candidatos,setCandidatos] = useState([]);
+
     const { usuario } = useApp();
-    console.log(usuario);
-    console.log(usuario?.correo);
     const correo = usuario?.id ?? "";
 
     const [vistaActiva, setVistaActiva] = useState("inicio");
+
+    const [oferenteSeleccionado, setOferenteSeleccionado] = useState(null);
+
+    const cargarDetalleOferente = async (idOferente) => {
+
+        const res = await fetchAuth(
+            `/api/empresa/oferentes/${idOferente}`
+        );
+        if (!res.ok)
+            return;
+        const data = await res.json();
+        setOferenteSeleccionado(data);
+        setVistaActiva("detalleOferente");
+    };
 
     const navLinks = [
         { key: "inicio",          label: "Dashboard" },
@@ -204,15 +346,53 @@ export default function DashboardEmpresa({ onLogout }) {
         { key: "publicarPuesto",  label: "Publicar puesto" },
     ];
 
+    const cargarCandidatos = async (puesto) => {
+
+        const res = await fetchAuth(
+            `/api/empresa/puestos/${puesto.id}/candidatos`
+        );
+
+        if(!res.ok)
+            return;
+
+        const data = await res.json();
+
+        setPuestoSeleccionado(puesto);
+        setCandidatos(data);
+
+        setVistaActiva("candidatos");
+    };
+
     const renderVista = () => {
         switch (vistaActiva) {
             case "misPuestos":
-                return <MisPuestos correo={correo} />;
+                return <MisPuestos correo={correo}
+                                   onBuscarCandidatos={cargarCandidatos}
+                />;
             case "publicarPuesto":
                 return (
                     <PublicarPuesto
                         correo={correo}
                         onPublicado={() => setVistaActiva("misPuestos")}
+                    />
+                );
+            case "candidatos":
+                return (
+                    <CandidatosPuesto
+                        puesto={puestoSeleccionado}
+                        candidatos={candidatos}
+                        onVerDetalle={cargarDetalleOferente}
+                        onVolver={() =>
+                            setVistaActiva("misPuestos")}
+                    />
+                );
+            case "detalleOferente":
+                return (
+                    <DetalleOferente
+                        oferente={oferenteSeleccionado}
+                        onVolver={() =>
+                            setVistaActiva("candidatos")
+                        }
                     />
                 );
             default:
