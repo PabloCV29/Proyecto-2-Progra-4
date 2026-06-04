@@ -8,6 +8,7 @@ import Login from "./pages/Login.jsx";
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import DashboardOferente from "./pages/DashboardOferente.jsx";
 import DashboardEmpresa from "./pages/DashboardEmpresa.jsx";
+import BuscarPuestos from "./pages/buscarpuestos.jsx";
 
 function PuestoCard({ puesto, onVerDetalle }) {
     return (
@@ -94,6 +95,7 @@ export default function App() {
         if (key === "empresa")       setVista("registroEmpresa");
         else if (key === "oferente") setVista("registroOferente");
         else if (key === "login")    setVista("login");
+        else if (key === "buscar")   setVista("buscarPuestos");
         else { setVista("inicio"); fetchUltimosPuestos(); }
     };
 
@@ -126,6 +128,26 @@ export default function App() {
                 onCancelar={() => { setVista("inicio"); setNavActivo("inicio"); }}
                 onLoginExitoso={(rol) => redirigirPorRol(rol)}
             />
+        </div>
+    );
+    // ── Buscar Puestos ────────────────────────────────────────────────────────
+    if (vista === "buscarPuestos") return (
+        <div className="app-wrapper">
+            <Header navActivo={navActivo} onNavClick={handleNavClick} />
+            <BuscarPuestos />
+            <footer className="app-footer">
+                <div className="footer-divider" />
+                <div className="footer-inner">
+                    <div className="footer-left">
+                        <strong className="footer-marca">Bolsa de Empleo</strong>
+                        <span className="footer-empresa">JPM S.A.</span>
+                    </div>
+                    <div className="footer-right">
+                        <span className="footer-contacto">Contacto: info@una</span>
+                        <span className="footer-creditos">Créditos: Santa Ana, Turrubares, San Francisco</span>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 

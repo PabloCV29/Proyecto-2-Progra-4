@@ -25,6 +25,7 @@ public class TokenService {
         Instant now = Instant.now();
         var claims = new JWTClaimsSet.Builder()
                 .issuer("BolsaEmpleo")
+                .subject(id)           // ← agregar esta línea
                 .issueTime(Date.from(now))
                 .expirationTime(Date.from(now.plus(jwtConfig.getJwtExpiration(), ChronoUnit.MILLIS)))
                 .claim("scope", List.of(rol))

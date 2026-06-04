@@ -37,6 +37,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/empresa/registro").permitAll()
                         .requestMatchers("/api/oferente/registro").permitAll()
                         .requestMatchers("/api/puestos/ultimos").permitAll()
+                        .requestMatchers("/api/oferente/registro").permitAll()
+                        .requestMatchers("/api/oferente/cv/**").permitAll()  // empresas también ven CVs
+                        .requestMatchers(    "/api/caracteristicas/raices").permitAll()
+                        .requestMatchers("/api/puestos/buscar-por-caracteristicas").permitAll()
                         .requestMatchers("/api/puestos/{id}").permitAll()
                         // Protegidos por rol
                         .requestMatchers("/api/admin/**").hasAuthority("SCOPE_ADM")

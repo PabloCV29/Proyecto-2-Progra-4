@@ -1,15 +1,10 @@
 package org.example.backend;
 
+import org.example.backend.data.DTO.CaracteristicaDTO;
 import org.example.backend.data.DTO.PuestoResumenDTO;
 import org.example.backend.data.PuestoRepository;
-import org.example.backend.logic.Administrador;
-import org.example.backend.logic.Empresa;
-import org.example.backend.logic.Oferente;
-import org.example.backend.logic.Puesto;
-import org.example.backend.logic.Service.AdministradorService;
-import org.example.backend.logic.Service.EmpresaService;
-import org.example.backend.logic.Service.OferenteService;
-import org.example.backend.logic.Service.PuestoService;
+import org.example.backend.logic.*;
+import org.example.backend.logic.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +25,9 @@ public class Controller {
 
     @Autowired
     private PuestoService puestoService;
+
+    @Autowired
+    private CaracteristicasService caracteristicasService;
 
     @Autowired
     private EmpresaService empresaService;//Este es el correcto
@@ -202,19 +200,43 @@ public class Controller {
     }
 
     //Para desactivar puesto
-    @PutMapping("/empresa/puestos/{id}/desactivar")
-    public ResponseEntity<Map<String, Object>> desactivarPuesto(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        Puesto puesto = puestoService.buscarPuestoPorId(id);
-        if (puesto == null) {
-            response.put("error", "Puesto no encontrado");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-        puestoService.desactivar(id);
-        response.put("mensaje", "Puesto desactivado correctamente");
-        return ResponseEntity.ok(response);
-    }
+//    @PutMapping("/empresa/puestos/{id}/desactivar")
+//    public ResponseEntity<Map<String, Object>> desactivarPuesto(@PathVariable Long id) {
+//        Map<String, Object> response = new HashMap<>();
+//        Puesto puesto = puestoService.buscarPuestoPorId(id);
+//        if (puesto == null) {
+//            response.put("error", "Puesto no encontrado");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//        }
+//        puestoService.desactivar(id);
+//        response.put("mensaje", "Puesto desactivado correctamente");
+//        return ResponseEntity.ok(response);
+//    }
 
+    //Para puestos x empresa
+//    @GetMapping("/empresa/puestos")
+//    public ResponseEntity<List<PuestoResumenDTO>> getPuestosPorEmpresa(@RequestParam String correo) {
+//        List<PuestoResumenDTO> lista = puestoService.listarPorEmpresa(correo)
+//                .stream()
+//                .map(PuestoResumenDTO::new)
+//                .collect(java.util.stream.Collectors.toList());
+//        return ResponseEntity.ok(lista);
+//    }
+
+    //Para activar puesto
+//    @PutMapping("/empresa/puestos/{id}/activar")
+//    public ResponseEntity<Map<String, Object>> activarPuesto(@PathVariable Long id) {
+//        Map<String, Object> response = new HashMap<>();
+//        Puesto puesto = puestoService.buscarPuestoPorId(id);
+//        if (puesto == null) {
+//            response.put("error", "Puesto no encontrado");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//        }
+//        puesto.setActivo(true);
+//        puestoService.publicarPuesto(puesto);
+//        response.put("mensaje", "Puesto activado correctamente");
+//        return ResponseEntity.ok(response);
+//    }
 
     // ── ADMIN ────────────────────────────────────────────────────────────────────
     @GetMapping("/admin/empresas-pendientes")
@@ -238,6 +260,31 @@ public class Controller {
     public ResponseEntity<Void> aprobarOferente(@RequestParam String identificacion) {
         oferenteService.aprobar(identificacion);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/caracteristicas/raices")
+    public ResponseEntity<List<CaracteristicaDTO>> getRaices() {
+        List<Caracteristicas> raices = caracteristicasService.buscarRaices();
+        List<CaracteristicaDTO> dto = raices.stream()
+                .map(CaracteristicaDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dto);
+    }
+    @GetMapping("/puestos/buscar-por-caracteristicas")
+    public ResponseEntity<List<org.example.backend.data.DTO.PuestoResumenDTO>> buscarPorCaracteristicas(
+            @RequestParam(required = false) List<Long> ids) {
+
+        List<Puesto> puestos;
+        if (ids == null || ids.isEmpty()) {
+            puestos = puestoService.list5Ultimos();
+        } else {
+            puestos = puestoService.buscarPorCaracteristicas(ids);
+        }
+
+        List<org.example.backend.data.DTO.PuestoResumenDTO> resultado = puestos.stream()
+                .map(org.example.backend.data.DTO.PuestoResumenDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
     }
 
 }

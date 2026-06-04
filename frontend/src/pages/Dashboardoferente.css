@@ -1,0 +1,282 @@
+/* ─── Layout habilidades ─────────────────────────────────────────────────── */
+.ofe-habilidades-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.ofe-panel {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 24px;
+}
+
+/* ─── Árbol de navegación ────────────────────────────────────────────────── */
+.arbol-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.arbol-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.btn-nodo {
+    text-align: left;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    color: #1a1a1a;        /* ← esta es la línea clave */
+    width: 100%;
+    display: block;
+}
+
+.btn-nodo:hover       { background: #ececec; border-color: #bbb; }
+.btn-nodo--activo     { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+.btn-volver-arbol {
+    background: none;
+    border: none;
+    color: #c0392b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.btn-volver-arbol:hover { text-decoration: underline; }
+
+/* ─── Selector de nivel ──────────────────────────────────────────────────── */
+.ofe-form-nivel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #eee;
+    padding-top: 14px;
+}
+
+.ofe-form-nivel label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.sel-caracteristica {
+    font-size: 14px;
+    color: #c0392b;
+    font-weight: 600;
+    min-height: 20px;
+}
+
+.nivel-selector {
+    display: flex;
+    gap: 6px;
+}
+
+.nivel-btn {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.nivel-btn--activo {
+    color: #f39c12;
+    border-color: #f39c12;
+}
+
+/* ─── Tabla - badge estrellas ────────────────────────────────────────────── */
+.nivel-badge {
+    font-size: 14px;
+    color: #f39c12;
+    letter-spacing: 1px;
+}
+
+.btn-eliminar {
+    background: none;
+    border: 1px solid #c0392b;
+    color: #c0392b;
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-eliminar:hover { background: #c0392b; color: #fff; }
+
+/* ─── Mensajes ───────────────────────────────────────────────────────────── */
+.dash-mensaje-error { background: #fdecea; color: #c0392b; border-color: #f5c6cb; }
+
+/* ─── CV ─────────────────────────────────────────────────────────────────── */
+.ofe-cv-layout {
+    max-width: 520px;
+}
+
+.ofe-cv-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.cv-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.cv-upload-area:hover { border-color: #c0392b; }
+
+.cv-icon { font-size: 36px; }
+
+.cv-file-label {
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    text-align: center;
+}
+
+.cv-ver {
+    margin-top: 20px;
+}
+
+.btn-ver-cv {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #c0392b;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s;
+}
+
+.btn-ver-cv:hover { background: #e74c3c; }
+
+/* ─── Modal de detalle de puesto ─────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 28px 32px;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px; right: 14px;
+    background: none; border: none;
+    font-size: 16px; cursor: pointer;
+    color: #888;
+}
+
+.modal-empresa  { font-size: 12px; color: #888; margin: 0; }
+.modal-titulo   { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0; }
+.modal-salario  { font-size: 15px; color: #333; margin: 0; }
+
+.modal-requisitos h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #888;
+    margin: 8px 0 6px;
+}
+
+.modal-requisitos ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 6px;
+}
+
+.modal-requisitos li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.req-nivel {
+    background: #c0392b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* ─── Puestos grid (reutiliza App.css pero por si hace falta aquí) ────────── */
+.btn-ver-detalle {
+    margin-top: 4px;
+    padding: 6px;
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    width: 100%;
+}
+
+.btn-ver-detalle:hover {
+    background: #c0392b;
+    color: #fff;
+    border-color: #c0392b;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .ofe-habilidades-layout {
+        grid-template-columns: 1fr;
+    }
+}
