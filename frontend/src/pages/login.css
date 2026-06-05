@@ -79,7 +79,7 @@
 .btn-login-submit {
     margin-top: 6px;
     padding: 10px;
-    background: var(--rojo);
+    background: #27ae60;
     color: var(--blanco);
     border: none;
     border-radius: var(--radio);
@@ -90,7 +90,7 @@
 }
 
 .btn-login-submit:hover:not(:disabled) {
-    background: var(--rojo-light);
+    background: #219150;
 }
 
 .btn-login-submit:disabled {

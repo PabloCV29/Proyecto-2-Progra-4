@@ -3,7 +3,6 @@ import { usePendientes } from "../hooks/usePendientes";
 import "./dashboardAdmin.css";
 
 // ── Sección Características ──────────────────────────────────────────────────
-// IMPORTANTE: debe estar FUERA de DashboardAdmin, no adentro
 function SeccionCaracteristicas() {
     const token = localStorage.getItem("token");
     const authHeaders = {
@@ -11,21 +10,23 @@ function SeccionCaracteristicas() {
         "Content-Type": "application/json",
     };
 
-    const [todas, setTodas]               = useState([]);
-    const [loading, setLoading]           = useState(true);
-    const [mensaje, setMensaje]           = useState("");
-    const [error, setError]               = useState("");
-    const [nombre, setNombre]             = useState("");
-    const [padreId, setPadreId]           = useState("");
-    const [editandoId, setEditandoId]     = useState(null);
-    const [editNombre, setEditNombre]     = useState("");
+    const [raices, setRaices]         = useState([]);   // FIX: árbol desde raíces, no findAll
+    const [loading, setLoading]       = useState(true);
+    const [mensaje, setMensaje]       = useState("");
+    const [error, setError]           = useState("");
+    const [nombre, setNombre]         = useState("");
+    const [padreId, setPadreId]       = useState("");
+    const [editandoId, setEditandoId] = useState(null);
+    const [editNombre, setEditNombre] = useState("");
 
+    // FIX: usar /api/admin/caracteristicas (raíces con hijos anidados)
+    // en lugar de /todas (findAll plano sin hijos)
     const cargar = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/admin/caracteristicas/todas", { headers: authHeaders });
+            const res = await fetch("/api/admin/caracteristicas", { headers: authHeaders });
             const data = await res.json();
-            setTodas(data);
+            setRaices(data);
         } catch {
             setError("Error al cargar características");
         } finally {
@@ -87,7 +88,7 @@ function SeccionCaracteristicas() {
         }
     };
 
-    // Convierte el árbol en lista plana para la tabla y el dropdown
+    // FIX: ahora recibe el árbol correcto (raíces con hijos anidados)
     const aplanar = (nodos, padre = null, nivel = 0) => {
         const result = [];
         for (const n of nodos) {
@@ -97,7 +98,7 @@ function SeccionCaracteristicas() {
         return result;
     };
 
-    const filas = aplanar(todas);
+    const filas = aplanar(raices);
 
     return (
         <div>
@@ -105,29 +106,29 @@ function SeccionCaracteristicas() {
 
             {mensaje && <div className="dash-mensaje">{mensaje}</div>}
             {error && (
-                <div className="dash-mensaje" style={{ background: "#f8d7da", color: "#721c24", borderColor: "#f5c6cb" }}>
+                <div className="dash-mensaje dash-mensaje--error">
                     {error}
                 </div>
             )}
 
             {/* ── Formulario crear ── */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px", alignItems: "flex-end", flexWrap: "wrap" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "13px", fontWeight: 600 }}>Nombre</label>
+            <div className="carac-form-row">
+                <div className="carac-form-grupo">
+                    <label className="carac-label">Nombre</label>
                     <input
+                        className="carac-input"
                         value={nombre}
                         onChange={e => setNombre(e.target.value)}
                         placeholder="Ej: JavaScript"
                         onKeyDown={e => e.key === "Enter" && handleCrear()}
-                        style={{ padding: "7px 10px", border: "1px solid #ccc", borderRadius: "4px", fontSize: "14px", minWidth: "200px" }}
                     />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "13px", fontWeight: 600 }}>Padre (opcional)</label>
+                <div className="carac-form-grupo">
+                    <label className="carac-label">Padre (opcional)</label>
                     <select
+                        className="carac-select"
                         value={padreId}
                         onChange={e => setPadreId(e.target.value)}
-                        style={{ padding: "7px 10px", border: "1px solid #ccc", borderRadius: "4px", fontSize: "14px", minWidth: "180px" }}
                     >
                         <option value="">— Sin padre (raíz) —</option>
                         {filas.map(f => (
@@ -137,7 +138,7 @@ function SeccionCaracteristicas() {
                         ))}
                     </select>
                 </div>
-                <button className="btn-aprobar" onClick={handleCrear} style={{ padding: "8px 18px" }}>
+                <button className="btn-aprobar carac-btn-agregar" onClick={handleCrear}>
                     + Agregar
                 </button>
             </div>
@@ -151,19 +152,20 @@ function SeccionCaracteristicas() {
                 <table className="dash-table">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style={{ width: "50px" }}>ID</th>
                         <th>Nombre</th>
                         <th>Categoría padre</th>
-                        <th>Acciones</th>
+                        <th style={{ width: "160px" }}>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     {filas.map(f => (
                         <tr key={f.id}>
-                            <td style={{ color: "#999", fontSize: "12px" }}>{f.id}</td>
+                            <td className="carac-td-id">{f.id}</td>
                             <td>
                                 {editandoId === f.id ? (
                                     <input
+                                        className="carac-input carac-input--edit"
                                         value={editNombre}
                                         onChange={e => setEditNombre(e.target.value)}
                                         onKeyDown={e => {
@@ -171,49 +173,53 @@ function SeccionCaracteristicas() {
                                             if (e.key === "Escape") setEditandoId(null);
                                         }}
                                         autoFocus
-                                        style={{ padding: "4px 8px", border: "1px solid #c0392b", borderRadius: "4px", fontSize: "14px" }}
                                     />
                                 ) : (
-                                    <span style={{ paddingLeft: `${f.nivel * 16}px` }}>
-                                            {f.nivel > 0 && <span style={{ color: "#aaa" }}>└ </span>}
+                                    <span style={{ paddingLeft: `${f.nivel * 18}px` }}>
+                                            {f.nivel > 0 && <span className="carac-rama">└ </span>}
                                         {f.nombre}
                                         </span>
                                 )}
                             </td>
-                            <td style={{ color: "#777", fontSize: "13px" }}>
-                                {f.padreNombre ?? <span style={{ color: "#bbb" }}>—</span>}
+                            <td className="carac-td-padre">
+                                {f.padreNombre ?? <span className="carac-sin-padre">—</span>}
                             </td>
-                            <td style={{ display: "flex", gap: "6px" }}>
-                                {editandoId === f.id ? (
-                                    <>
-                                        <button className="btn-aprobar" onClick={() => handleEditar(f.id)}>
-                                            Guardar
-                                        </button>
-                                        <button
-                                            onClick={() => setEditandoId(null)}
-                                            style={{ background: "none", border: "1px solid #ccc", borderRadius: "4px", padding: "5px 10px", fontSize: "12px", cursor: "pointer" }}
-                                        >
-                                            Cancelar
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="btn-aprobar"
-                                            style={{ background: "#2980b9" }}
-                                            onClick={() => { setEditandoId(f.id); setEditNombre(f.nombre); }}
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            className="btn-aprobar"
-                                            style={{ background: "#c0392b" }}
-                                            onClick={() => handleEliminar(f.id)}
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </>
-                                )}
+                            <td>
+                                {/* FIX: acciones en div flex, no en td directo */}
+                                <div className="carac-acciones">
+                                    {editandoId === f.id ? (
+                                        <>
+                                            <button
+                                                className="btn-aprobar"
+                                                onClick={() => handleEditar(f.id)}
+                                            >
+                                                Guardar
+                                            </button>
+
+                                            <button
+                                                className="btn-cancelar"
+                                                onClick={() => setEditandoId(null)}
+                                            >
+                                                Cancelar
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button
+                                                className="btn-aprobar btn-editar"
+                                                onClick={() => { setEditandoId(f.id); setEditNombre(f.nombre); }}
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                className="btn-aprobar btn-eliminar-carac"
+                                                onClick={() => handleEliminar(f.id)}
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))}
@@ -226,7 +232,8 @@ function SeccionCaracteristicas() {
 
 // ── Dashboard Admin ──────────────────────────────────────────────────────────
 export default function DashboardAdmin({ onLogout }) {
-    const nombre = localStorage.getItem("nombre") || "Administrador";
+    // FIX: mostrar la cédula (userId) no el nombre "Administrador"
+    const cedula = localStorage.getItem("userId") || "Admin";
     const [vista, setVista] = useState("inicio");
     const [mensaje, setMensaje] = useState("");
 
@@ -279,7 +286,8 @@ export default function DashboardAdmin({ onLogout }) {
                     </button>
                 </div>
                 <div className="dash-nav-right">
-                    <span className="dash-user">{nombre}</span>
+                    {/* FIX: cedula en vez de nombre */}
+                    <span className="dash-user">ID: {cedula}</span>
                     <button className="btn-logout" onClick={onLogout}>Cerrar sesión</button>
                 </div>
             </nav>
@@ -287,7 +295,7 @@ export default function DashboardAdmin({ onLogout }) {
             <main className="dash-main">
                 {mensaje && <div className="dash-mensaje">{mensaje}</div>}
                 {errorMsg && (
-                    <div className="dash-mensaje" style={{ background: "#f8d7da", color: "#721c24", borderColor: "#f5c6cb" }}>
+                    <div className="dash-mensaje dash-mensaje--error">
                         Error cargando pendientes: {errorMsg}
                     </div>
                 )}

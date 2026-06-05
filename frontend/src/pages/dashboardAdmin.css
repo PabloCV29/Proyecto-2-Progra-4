@@ -1,5 +1,9 @@
+/* ── Variables base (heredadas de App.css / index.css) ───────────────────── */
+/* --rojo, --rojo-light, --texto, --texto-sub, --blanco, --gris-card, --gris-borde, --radio */
+
 .dashboard-wrapper { display: flex; flex-direction: column; min-height: 100vh; background: var(--blanco); }
 
+/* ── Navbar ──────────────────────────────────────────────────────────────── */
 .dash-nav {
     background: var(--texto);
     display: flex; align-items: center;
@@ -12,15 +16,17 @@
     font-size: 13px; padding: 6px 12px; cursor: pointer;
     border-radius: var(--radio); transition: background 0.15s, color 0.15s;
 }
-.dash-nav-links button:hover, .dash-nav-links button.active {
-    background: var(--rojo); color: var(--blanco);
-}
+.dash-nav-links button:hover,
+.dash-nav-links button.active { background: var(--rojo); color: var(--blanco); }
+
 .badge {
     background: var(--rojo-light); color: white;
     font-size: 10px; padding: 1px 5px; border-radius: 10px; margin-left: 4px;
 }
+
 .dash-nav-right { display: flex; align-items: center; gap: 12px; }
 .dash-user { color: #ccc; font-size: 13px; }
+
 .btn-logout {
     background: none; border: 1px solid #ccc; color: #ccc;
     font-size: 12px; padding: 4px 10px; border-radius: var(--radio);
@@ -28,14 +34,22 @@
 }
 .btn-logout:hover { background: var(--rojo); border-color: var(--rojo); color: white; }
 
+/* ── Main ────────────────────────────────────────────────────────────────── */
 .dash-main { flex: 1; padding: 32px 24px; }
-.dash-titulo { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--texto); }
+.dash-titulo { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--texto); text-align: left; }
+
+/* ── Mensajes ────────────────────────────────────────────────────────────── */
 .dash-mensaje {
     background: #d4edda; color: #155724;
     border: 1px solid #c3e6cb; border-radius: var(--radio);
     padding: 10px 16px; margin-bottom: 16px; font-size: 14px;
+    text-align: left;
+}
+.dash-mensaje--error {
+    background: #f8d7da; color: #721c24; border-color: #f5c6cb;
 }
 
+/* ── Tarjetas de inicio ──────────────────────────────────────────────────── */
 .dash-cards { display: flex; gap: 20px; flex-wrap: wrap; }
 .stat-card {
     background: var(--gris-card); border: 1px solid var(--gris-borde);
@@ -48,12 +62,123 @@
 .stat-num { font-size: 40px; font-weight: 700; color: var(--rojo); }
 .stat-label { font-size: 13px; color: var(--texto-sub); }
 
-.dash-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.dash-table th { background: var(--gris-card); padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--gris-borde); }
-.dash-table td { padding: 10px 12px; border-bottom: 1px solid var(--gris-borde); }
+/* ── Tabla general ───────────────────────────────────────────────────────── */
+.dash-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+.dash-table th {
+    background: var(--gris-card); padding: 10px 12px;
+    text-align: left; font-weight: 600; border-bottom: 2px solid var(--gris-borde);
+    color: var(--texto);
+}
+.dash-table td { padding: 10px 12px; border-bottom: 1px solid var(--gris-borde); color: var(--texto); }
+
+/* ── Botón Aprobar (verde) ───────────────────────────────────────────────── */
 .btn-aprobar {
     background: #27ae60; color: white; border: none;
     padding: 5px 14px; border-radius: var(--radio);
-    font-size: 12px; cursor: pointer; transition: background 0.15s;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
 }
 .btn-aprobar:hover { background: #219150; }
+
+/* ── Variantes de btn-aprobar para características ───────────────────────── */
+.btn-editar          { background: #2980b9; }
+.btn-editar:hover    { background: #2471a3; }
+.btn-eliminar-carac          { background: var(--rojo); }
+.btn-eliminar-carac:hover    { background: var(--rojo-light); }
+
+
+.btn-cancelar {
+    background: var(--rojo);
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio);
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.btn-cancelar:hover {
+    background: var(--rojo-light);
+    border-color: #aaa;
+}
+
+/* ── Acciones en tabla de características ────────────────────────────────── */
+.carac-acciones {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* ── Formulario de crear característica ──────────────────────────────────── */
+.carac-form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.carac-form-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.carac-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--texto);
+    text-align: left;
+}
+
+.carac-input {
+    padding: 7px 10px;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio);
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--blanco);
+    min-width: 200px;
+    transition: border-color 0.2s;
+}
+.carac-input:focus {
+    outline: none;
+    border-color: var(--rojo);
+}
+.carac-input--edit {
+    min-width: 140px;
+    border-color: var(--rojo);
+}
+
+.carac-select {
+    padding: 7px 10px;
+    border: 1px solid var(--gris-borde);
+    border-radius: var(--radio);
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--blanco);
+    min-width: 200px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.carac-select:focus {
+    outline: none;
+    border-color: var(--rojo);
+}
+
+.carac-btn-agregar {
+    padding: 8px 18px;
+    align-self: flex-end;
+}
+
+/* ── Celdas de tabla de características ──────────────────────────────────── */
+.carac-td-id    { color: #999; font-size: 12px; width: 50px; }
+.carac-td-padre { color: var(--texto-sub); font-size: 13px; }
+.carac-rama     { color: #bbb; }
+.carac-sin-padre { color: #bbb; }
+
+/* ── Estado vacío / cargando ─────────────────────────────────────────────── */
+.estado-msg { color: var(--texto-sub); font-size: 14px; margin-bottom: 12px; text-align: left; }

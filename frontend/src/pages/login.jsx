@@ -108,7 +108,7 @@ export default function Login({ onCancelar, onLoginExitoso }) {
 
                         <button
                             type="button"
-                            className="btn btn-secondary"
+                            className="btn btn-primary"
                             onClick={onCancelar}
                             disabled={loading}
                             style={{ marginTop: "4px" }}
