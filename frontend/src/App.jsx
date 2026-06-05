@@ -47,7 +47,6 @@ function DetalleModal({ puesto, onClose }) {
                         </ul>
                     </div>
                 )}
-                <button className="btn-aplicar">Aplicar ahora</button>
             </div>
         </div>
     );

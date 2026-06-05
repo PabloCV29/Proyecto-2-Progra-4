@@ -271,3 +271,29 @@
     min-width: 0;  /* evita que el input se expanda más allá del contenedor */
     width: 0;      /* fuerza que el flex: 1 controle el ancho, no el contenido */
 }
+
+
+.input-clave-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-clave-wrapper input {
+    flex: 1;
+}
+
+.btn-toggle-clave {
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-toggle-clave:hover {
+    color: #004999;
+    text-decoration: underline;
+}

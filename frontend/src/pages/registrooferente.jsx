@@ -123,9 +123,8 @@ export default function RegistroOferente({ onCancelar }) {
                                 type="button"
                                 className="btn-toggle-clave"
                                 onClick={() => setMostrarClave((v) => !v)}
-                                title={mostrarClave ? "Ocultar clave" : "Mostrar clave"}
                             >
-                                Mostrar
+                                {mostrarClave ? "Ocultar" : "Mostrar"}
                             </button>
                         </div>
                     </div>

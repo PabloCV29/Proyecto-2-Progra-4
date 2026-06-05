@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useApp } from "../AppProvider";
 import "./login.css";
+import logoLogin from "../assets/choche.jpg";
 
 export default function Login({ onCancelar, onLoginExitoso }) {
     const { actualizarUsuario } = useApp();
@@ -57,6 +58,14 @@ export default function Login({ onCancelar, onLoginExitoso }) {
 
                     {error && <div className="login-error">✕ {error}</div>}
 
+                    <div className="login-avatar">
+                        <img
+                            src={logoLogin}
+                            alt="Logo"
+                            className="login-avatar-img"
+                        />
+                    </div>
+
                     <form onSubmit={handleSubmit} className="login-form">
                         <div className="form-group">
                             <label htmlFor="id">Correo o ID</label>
@@ -88,7 +97,7 @@ export default function Login({ onCancelar, onLoginExitoso }) {
                                     className="btn-toggle-clave"
                                     onClick={() => setMostrarClave((v) => !v)}
                                 >
-                                    {mostrarClave ? "🙈" : "👁️"}
+                                    {mostrarClave ? "Ocultar" : "Mostrar"}
                                 </button>
                             </div>
                         </div>
