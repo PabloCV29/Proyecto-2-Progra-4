@@ -20,5 +20,10 @@ public interface PuestoRepository extends JpaRepository<Puesto, Long> {
     List<Puesto> findPublicosByCaracteristica(@Param("caracteristicaId") Long caracteristicaId);
     List<Puesto> findByDescripcionContainingIgnoreCaseOrEmpresaContainingIgnoreCase(String keyword1,String keyword2);
     List<Puesto> findByActivoTrue();
+    @Query("SELECT DISTINCT p FROM Puesto p " +
+            "JOIN p.caracteristicasPuestos cp " +
+            "WHERE p.publico = true AND p.activo = true " +
+            "AND cp.caracteristicas.id IN :ids")
+    List<Puesto> findPublicosPorAlgunaCaracteristica(@Param("ids") List<Long> ids);
 
 }

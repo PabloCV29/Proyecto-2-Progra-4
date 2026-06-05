@@ -51,15 +51,19 @@ public class PuestoService {
         }
     }
 
-    public List<Puesto> buscarPorCaracteristica(Long caracteristicaId) {
-        return puestoRepository.findPublicosByCaracteristica(caracteristicaId);
-    }
     public List<Puesto> buscarPorCaracteristicas(List<Long> ids) {
-        return ids.stream()
-                .flatMap(id -> puestoRepository
-                        .findPublicosByCaracteristica(id).stream())
-                .distinct()
-                .collect(java.util.stream.Collectors.toList());
+        if (ids == null || ids.isEmpty()) return List.of();
+
+        // Buscar puestos que tengan la primera característica
+        List<Puesto> candidatos = puestoRepository.findPublicosByCaracteristica(ids.get(0));
+
+        // Retener solo los que también tengan TODAS las demás
+        for (int i = 1; i < ids.size(); i++) {
+            List<Puesto> conEsta = puestoRepository.findPublicosByCaracteristica(ids.get(i));
+            candidatos.retainAll(conEsta);
+        }
+
+        return candidatos;
     }
 
     public List<CandidatoPuestoDTO> buscarCandidatos(Long puestoId) {
@@ -143,5 +147,9 @@ public class PuestoService {
 
             caracteristicasPuestoRepository.save(cp);
         }
+    }
+    public List<Puesto> buscarPorAlgunaCaracteristica(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return List.of();
+        return puestoRepository.findPublicosPorAlgunaCaracteristica(ids);
     }
 }

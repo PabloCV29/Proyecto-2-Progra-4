@@ -5,6 +5,7 @@ import org.example.backend.logic.Caracteristicas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,5 +47,14 @@ public class CaracteristicasService {
                 .orElseThrow(() -> new IllegalArgumentException("Característica no encontrada"));
         c.setNombre(nuevoNombre);
         caracteristicaRepository.save(c);
+    }
+    public List<Long> obtenerIdConDescendientes(Long id) {
+        List<Long> ids = new ArrayList<>();
+        ids.add(id);
+        List<Caracteristicas> hijos = caracteristicaRepository.findByPadreId(id);
+        for (Caracteristicas hijo : hijos) {
+            ids.addAll(obtenerIdConDescendientes(hijo.getId()));
+        }
+        return ids;
     }
 }

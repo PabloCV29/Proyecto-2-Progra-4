@@ -7,45 +7,54 @@
 }
 
 .ofe-panel {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px 24px;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 28px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
 }
 
 /* ─── Árbol de navegación ────────────────────────────────────────────────── */
 .arbol-nav {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     margin-bottom: 16px;
     max-height: 260px;
     overflow-y: auto;
 }
 
 .arbol-label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    color: #555;
-    margin-bottom: 4px;
+    color: #333333;
+    margin-bottom: 8px;
 }
 
 .btn-nodo {
     text-align: left;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 10px 12px;
     font-size: 13px;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    color: #1a1a1a;        /* ← esta es la línea clave */
+    transition: all .15s;
+    color: #1a1a1a;
     width: 100%;
     display: block;
 }
 
-.btn-nodo:hover       { background: #ececec; border-color: #bbb; }
-.btn-nodo--activo     { background: #c0392b; color: #fff; border-color: #c0392b; }
+.btn-nodo:hover {
+    border-color: #c0392b;
+    background: #fff6f5;
+}
+
+.btn-nodo--activo {
+    border-color: #c0392b;
+    background: #fdecea;
+    font-weight: 600;
+    color: #1a1a1a;
+}
 
 .btn-volver-arbol {
     background: none;
@@ -55,32 +64,38 @@
     font-weight: 600;
     cursor: pointer;
     padding: 0;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-align: left;
 }
 
-.btn-volver-arbol:hover { text-decoration: underline; }
+.btn-volver-arbol:hover {
+    text-decoration: underline;
+}
 
 /* ─── Selector de nivel ──────────────────────────────────────────────────── */
 .ofe-form-nivel {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    border-top: 1px solid #eee;
-    padding-top: 14px;
+    gap: 10px;
+    border-top: 1px solid #dddddd;
+    padding-top: 16px;
+    margin-top: 20px;
 }
 
 .ofe-form-nivel label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    color: #333;
+    color: #333333;
 }
 
 .sel-caracteristica {
-    font-size: 14px;
-    color: #c0392b;
+    text-align: left;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #dddddd;
+    color: #1a1a1a;
     font-weight: 600;
-    min-height: 20px;
 }
 
 .nivel-selector {
@@ -89,20 +104,25 @@
 }
 
 .nivel-btn {
-    background: none;
-    border: 1px solid #ccc;
+    background: #ffffff;
+    border: 1px solid #cccccc;
     border-radius: 4px;
     width: 36px;
     height: 36px;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    color: #ccc;
-    transition: color 0.15s, border-color 0.15s;
+    color: #cccccc;
+    transition: all .15s;
+}
+
+.nivel-btn:hover {
+    border-color: #c0392b;
 }
 
 .nivel-btn--activo {
     color: #f39c12;
     border-color: #f39c12;
+    background: #fff8e8;
 }
 
 /* ─── Tabla - badge estrellas ────────────────────────────────────────────── */
@@ -113,20 +133,31 @@
 }
 
 .btn-eliminar {
-    background: none;
-    border: 1px solid #c0392b;
-    color: #c0392b;
+    border: none;
+    background: #c0392b;
+    color: white;
+    padding: 6px 10px;
     border-radius: 4px;
-    padding: 3px 10px;
     font-size: 12px;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background .15s;
 }
 
-.btn-eliminar:hover { background: #c0392b; color: #fff; }
+.btn-eliminar:hover {
+    background: #a93226;
+}
 
 /* ─── Mensajes ───────────────────────────────────────────────────────────── */
-.dash-mensaje-error { background: #fdecea; color: #c0392b; border-color: #f5c6cb; }
+.dash-mensaje-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
 
 /* ─── CV ─────────────────────────────────────────────────────────────────── */
 .ofe-cv-layout {
@@ -134,15 +165,15 @@
 }
 
 .ofe-cv-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 24px;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 28px 32px;
     margin-top: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
 }
 
 .cv-upload-area {
@@ -151,20 +182,27 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
+    padding: 24px;
+    border: 2px dashed #cccccc;
+    border-radius: 6px;
+    background: #fafafa;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: all .15s;
+    user-select: none;
 }
 
-.cv-upload-area:hover { border-color: #c0392b; }
+.cv-upload-area:hover {
+    border-color: #c0392b;
+    background: #fff6f5;
+}
 
-.cv-icon { font-size: 36px; }
+.cv-icon {
+    font-size: 36px;
+}
 
 .cv-file-label {
     font-size: 14px;
-    color: #555;
+    color: #555555;
     cursor: pointer;
     text-align: center;
 }
@@ -175,17 +213,19 @@
 
 .btn-ver-cv {
     display: inline-block;
-    padding: 8px 20px;
+    padding: 9px 18px;
     background: #c0392b;
-    color: #fff;
-    border-radius: 6px;
+    color: #ffffff;
+    border-radius: 4px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
-    transition: background 0.15s;
+    transition: background .15s;
 }
 
-.btn-ver-cv:hover { background: #e74c3c; }
+.btn-ver-cv:hover {
+    background: #e74c3c;
+}
 
 /* ─── Modal de detalle de puesto ─────────────────────────────────────────── */
 .modal-overlay {
@@ -199,8 +239,8 @@
 }
 
 .modal-box {
-    background: #fff;
-    border-radius: 8px;
+    background: #ffffff;
+    border-radius: 6px;
     padding: 28px 32px;
     max-width: 480px;
     width: 90%;
@@ -213,70 +253,98 @@
 
 .modal-close {
     position: absolute;
-    top: 12px; right: 14px;
-    background: none; border: none;
-    font-size: 16px; cursor: pointer;
-    color: #888;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #888888;
 }
 
-.modal-empresa  { font-size: 12px; color: #888; margin: 0; }
-.modal-titulo   { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0; }
-.modal-salario  { font-size: 15px; color: #333; margin: 0; }
+.modal-empresa {
+    font-size: 12px;
+    color: #888888;
+    margin: 0;
+}
+
+.modal-titulo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.modal-salario {
+    font-size: 15px;
+    color: #1a1a1a;
+    margin: 0;
+}
 
 .modal-requisitos h4 {
     font-size: 12px;
     text-transform: uppercase;
-    color: #888;
+    color: #888888;
     margin: 8px 0 6px;
 }
 
 .modal-requisitos ul {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-direction: column; gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .modal-requisitos li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f5f5f5;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     padding: 6px 10px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 13px;
 }
 
 .req-nivel {
     background: #c0392b;
-    color: #fff;
+    color: #ffffff;
     font-size: 11px;
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 12px;
 }
 
-/* ─── Puestos grid (reutiliza App.css pero por si hace falta aquí) ────────── */
+/* ─── Botón ver detalle ─────────────────────────────────────────────────── */
 .btn-ver-detalle {
-    margin-top: 4px;
-    padding: 6px;
-    background: #fff;
-    color: #1a1a1a;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    margin-top: 6px;
     width: 100%;
+    padding: 9px 18px;
+    background: #555555;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
 }
 
 .btn-ver-detalle:hover {
-    background: #c0392b;
-    color: #fff;
-    border-color: #c0392b;
+    background: #333333;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .ofe-habilidades-layout {
         grid-template-columns: 1fr;
+    }
+
+    .ofe-panel,
+    .ofe-cv-card,
+    .modal-box {
+        padding: 20px 16px;
     }
 }

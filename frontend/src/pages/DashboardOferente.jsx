@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./dashboardAdmin.css";
 import "./dashboardOferente.css";
 
@@ -270,6 +271,7 @@ function SeccionHabilidades() {
 
 /* ─── Sección: Mi CV ─────────────────────────────────────────────────────── */
 function SeccionCV() {
+    const fileInputRef = useRef(null);
     const id          = localStorage.getItem("userId");
     const [archivo, setArchivo]   = useState(null);
     const [mensaje, setMensaje]   = useState({ tipo: "", texto: "" });
@@ -334,17 +336,22 @@ function SeccionCV() {
             )}
 
             <div className="ofe-cv-card">
-                <div className="cv-upload-area">
+                {/* Área clickeable completa */}
+                <div
+                    className="cv-upload-area"
+                    onClick={() => fileInputRef.current.click()}
+                >
                     <span className="cv-icon">📄</span>
-                    <label className="cv-file-label">
-                        {archivo ? archivo.name : "Seleccioná tu CV (PDF)"}
-                        <input
-                            type="file"
-                            accept=".pdf"
-                            style={{ display: "none" }}
-                            onChange={(e) => setArchivo(e.target.files[0])}
-                        />
-                    </label>
+                    <span className="cv-file-label">
+            {archivo ? archivo.name : "Seleccioná tu CV (PDF)"}
+        </span>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf"
+                        style={{ display: "none" }}
+                        onChange={(e) => setArchivo(e.target.files[0])}
+                    />
                 </div>
 
                 <button

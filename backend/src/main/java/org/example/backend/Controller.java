@@ -111,6 +111,7 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
     @PostMapping("/oferente/registro")
     public ResponseEntity<Map<String, Object>> registrarOferente(@RequestBody Oferente oferente) {
         Map<String, Object> response = new HashMap<>();
@@ -261,6 +262,7 @@ public class Controller {
         oferenteService.aprobar(identificacion);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/caracteristicas/raices")
     public ResponseEntity<List<CaracteristicaDTO>> getRaices() {
         List<Caracteristicas> raices = caracteristicasService.buscarRaices();
@@ -269,22 +271,29 @@ public class Controller {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dto);
     }
+
     @GetMapping("/puestos/buscar-por-caracteristicas")
-    public ResponseEntity<List<org.example.backend.data.DTO.PuestoResumenDTO>> buscarPorCaracteristicas(
+    public ResponseEntity<List<PuestoResumenDTO>> buscarPorCaracteristicas(
             @RequestParam(required = false) List<Long> ids) {
 
         List<Puesto> puestos;
         if (ids == null || ids.isEmpty()) {
             puestos = puestoService.list5Ultimos();
         } else {
-            puestos = puestoService.buscarPorCaracteristicas(ids);
+            // Expandir cada ID seleccionado con todos sus descendientes
+            List<Long> idsExpandidos = ids.stream()
+                    .flatMap(id -> caracteristicasService
+                            .obtenerIdConDescendientes(id).stream())
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            puestos = puestoService.buscarPorAlgunaCaracteristica(idsExpandidos);
         }
 
-        List<org.example.backend.data.DTO.PuestoResumenDTO> resultado = puestos.stream()
-                .map(org.example.backend.data.DTO.PuestoResumenDTO::new)
+        List<PuestoResumenDTO> resultado = puestos.stream()
+                .map(PuestoResumenDTO::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(resultado);
     }
-
 }
