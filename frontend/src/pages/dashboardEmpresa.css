@@ -581,3 +581,50 @@
 .emp-btn-eliminar:hover {
     background: #a93226;
 }
+
+Dashboardempresa · CSS
+
+    /* ── Detalle oferente: layout top con botón CV ───────────────────────────── */
+.emp-detalle-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.emp-btn-cv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #c0392b;
+    color: #ffffff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background .15s, box-shadow .15s;
+}
+
+.emp-btn-cv:hover {
+    background: #e74c3c;
+    box-shadow: 0 2px 8px rgba(192,57,43,.3);
+}
+
+.emp-cv-sin {
+    font-size: 13px;
+    color: #999999;
+    font-style: italic;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+/* Estrellas en tabla de habilidades del detalle */
+.emp-nivel-badge {
+    font-size: 14px;
+    color: #f39c12;
+    letter-spacing: 1px;
+}

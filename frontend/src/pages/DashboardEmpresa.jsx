@@ -138,6 +138,15 @@ function DetalleOferente({ oferente, onVolver }) {
                     {oferente.residencia}
                 </p>
             </div>
+            {oferente.curriculum ? (
+                <a href={`/api/oferente/cv/${oferente.identificacion}`}
+                   target="_blank" rel="noreferrer"
+                   className="emp-btn-cv">
+                     Ver CV
+                </a>
+            ) : (
+                <span className="emp-cv-sin">Sin CV subido</span>
+            )}
             <h3 className="emp-subtitulo">
                 Habilidades
             </h3>
