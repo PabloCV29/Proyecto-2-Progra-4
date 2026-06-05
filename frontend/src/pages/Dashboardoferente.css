@@ -1,20 +1,349 @@
-/* ─── Layout habilidades ─────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════
+   DASHBOARD OFERENTE — sigue el mismo sistema visual que DashboardEmpresa
+   Todas las clases usan prefijo "ofe-" para evitar colisiones
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ofe-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f2f2f2;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1a1a1a;
+    text-align: left;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.ofe-header {
+    background: white;
+    padding: 0 24px;
+}
+
+.ofe-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 10px 0;
+}
+
+.ofe-header__divider {
+    height: 2px;
+    background: #c0392b;
+}
+
+/* Logo */
+.ofe-header__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.ofe-logo-circle {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #c0392b;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    font-weight: 700;
+    color: #c0392b;
+    line-height: 1.1;
+    text-align: center;
+}
+
+.ofe-logo-icon { font-size: 16px; }
+
+.ofe-header__marca {
+    font-size: 16px;
+    font-weight: 700;
+    color: black;
+}
+
+/* Nav */
+.ofe-nav {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+}
+
+.ofe-nav__link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #c0392b;
+    padding: 4px 0;
+    position: relative;
+    transition: color .15s;
+}
+
+.ofe-nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: #c0392b;
+    transition: width .2s;
+}
+
+.ofe-nav__link:hover::after,
+.ofe-nav__link--activo::after { width: 100%; }
+
+.ofe-nav__link--activo { color: #c0392b; }
+
+/* Usuario y salir */
+.ofe-header__usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.ofe-header__nombre {
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.ofe-btn-salir {
+    padding: 5px 14px;
+    background: darkgrey;
+    border: 1px solid black;
+    border-radius: 4px;
+    color: black;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.ofe-btn-salir:hover {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: white;
+}
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
+.ofe-main {
+    flex: 1;
+    padding: 32px 24px;
+}
+
+/* ── Sección ─────────────────────────────────────────────────────────────── */
+.ofe-seccion {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 28px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    text-align: left;
+}
+
+.ofe-seccion__titulo {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #c0392b;
+}
+
+.ofe-subtitulo {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #1a1a1a;
+}
+
+/* ── Mensajes ────────────────────────────────────────────────────────────── */
+.ofe-mensaje {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    animation: ofeSlide .25s ease-out;
+    word-break: break-word;
+}
+
+@keyframes ofeSlide {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ofe-mensaje--exito {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.ofe-mensaje--error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ── Estado vacío / cargando ─────────────────────────────────────────────── */
+.ofe-estado {
+    color: #555555;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+/* ── Grid de puestos ─────────────────────────────────────────────────────── */
+.ofe-puestos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+/* ── Tarjeta puesto ──────────────────────────────────────────────────────── */
+.ofe-puesto-card {
+    background: #f2f2f2;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.ofe-puesto-card:hover {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 2px rgba(192,57,43,.12);
+}
+
+.ofe-puesto-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.ofe-puesto-card__nombre {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    flex: 1;
+    margin: 0;
+}
+
+.ofe-puesto-card__empresa {
+    font-size: 12px;
+    color: #555555;
+    margin: 0;
+}
+
+.ofe-puesto-card__salario {
+    font-size: 14px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+/* ── Botones generales ───────────────────────────────────────────────────── */
+.ofe-btn {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s, transform .1s;
+}
+
+.ofe-btn:active { transform: scale(0.98); }
+
+.ofe-btn--primario {
+    background: #c0392b;
+    color: #ffffff;
+}
+
+.ofe-btn--primario:hover:not(:disabled) {
+    background: #e74c3c;
+    box-shadow: 0 2px 8px rgba(192,57,43,.3);
+}
+
+.ofe-btn--secundario {
+    background: #555555;
+    color: #ffffff;
+}
+
+.ofe-btn--secundario:hover:not(:disabled) {
+    background: #333333;
+}
+
+.ofe-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Tabla ───────────────────────────────────────────────────────────────── */
+.ofe-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.ofe-tabla th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #c0392b;
+    font-size: 13px;
+}
+
+.ofe-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #dddddd;
+    font-size: 14px;
+}
+
+.ofe-tabla tr:hover { background: #fafafa; }
+
+/* ── Nivel badge estrellas ────────────────────────────────────────────────── */
+.ofe-nivel-badge {
+    font-size: 14px;
+    color: #f39c12;
+    letter-spacing: 1px;
+}
+
+.ofe-btn-eliminar {
+    border: none;
+    background: #c0392b;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.ofe-btn-eliminar:hover { background: #a93226; }
+
+/* ── Layout habilidades ──────────────────────────────────────────────────── */
 .ofe-habilidades-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: start;
+    margin-top: 16px;
 }
 
 .ofe-panel {
-    background: #ffffff;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
     border-radius: 6px;
-    padding: 28px 32px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    padding: 20px;
 }
 
-/* ─── Árbol de navegación ────────────────────────────────────────────────── */
-.arbol-nav {
+/* ── Árbol de navegación ─────────────────────────────────────────────────── */
+.ofe-arbol {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -23,14 +352,14 @@
     overflow-y: auto;
 }
 
-.arbol-label {
+.ofe-arbol__label {
     font-size: 14px;
     font-weight: 600;
     color: #333333;
     margin-bottom: 8px;
 }
 
-.btn-nodo {
+.ofe-arbol__nodo {
     text-align: left;
     background: #ffffff;
     border: 1px solid #cccccc;
@@ -44,19 +373,18 @@
     display: block;
 }
 
-.btn-nodo:hover {
+.ofe-arbol__nodo:hover {
     border-color: #c0392b;
     background: #fff6f5;
 }
 
-.btn-nodo--activo {
+.ofe-arbol__nodo--activo {
     border-color: #c0392b;
     background: #fdecea;
     font-weight: 600;
-    color: #1a1a1a;
 }
 
-.btn-volver-arbol {
+.ofe-arbol__volver {
     background: none;
     border: none;
     color: #c0392b;
@@ -68,102 +396,53 @@
     text-align: left;
 }
 
-.btn-volver-arbol:hover {
-    text-decoration: underline;
-}
+.ofe-arbol__volver:hover { text-decoration: underline; }
 
-/* ─── Selector de nivel ──────────────────────────────────────────────────── */
-.ofe-form-nivel {
+/* ── Formulario agregar característica ───────────────────────────────────── */
+.ofe-caracteristica-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
     border-top: 1px solid #dddddd;
     padding-top: 16px;
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
-.ofe-form-nivel label {
+.ofe-caracteristica-form label {
     font-size: 14px;
     font-weight: 600;
     color: #333333;
 }
 
-.sel-caracteristica {
-    text-align: left;
+.ofe-caracteristica-sel {
     padding: 10px;
     background: #f5f5f5;
     border-radius: 4px;
     border: 1px solid #dddddd;
     color: #1a1a1a;
     font-weight: 600;
+    font-size: 13px;
 }
 
-.nivel-selector {
+.ofe-estrellas {
     display: flex;
     gap: 6px;
 }
 
-.nivel-btn {
-    background: #ffffff;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-    cursor: pointer;
-    color: #cccccc;
-    transition: all .15s;
-}
-
-.nivel-btn:hover {
-    border-color: #c0392b;
-}
-
-.nivel-btn--activo {
-    color: #f39c12;
-    border-color: #f39c12;
-    background: #fff8e8;
-}
-
-/* ─── Tabla - badge estrellas ────────────────────────────────────────────── */
-.nivel-badge {
-    font-size: 14px;
-    color: #f39c12;
-    letter-spacing: 1px;
-}
-
-.btn-eliminar {
+.ofe-estrella {
     border: none;
-    background: #c0392b;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
+    background: transparent;
     cursor: pointer;
-    transition: background .15s;
+    font-size: 24px;
+    color: #cccccc;
+    transition: color .15s;
 }
 
-.btn-eliminar:hover {
-    background: #a93226;
-}
+.ofe-estrella:hover { color: #f39c12; }
 
-/* ─── Mensajes ───────────────────────────────────────────────────────────── */
-.dash-mensaje-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px 14px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 16px;
-}
+.ofe-estrella--activa { color: #f39c12; }
 
-/* ─── CV ─────────────────────────────────────────────────────────────────── */
-.ofe-cv-layout {
-    max-width: 520px;
-}
-
+/* ── CV ──────────────────────────────────────────────────────────────────── */
 .ofe-cv-card {
     background: #ffffff;
     border-radius: 6px;
@@ -174,9 +453,10 @@
     align-items: center;
     gap: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    max-width: 480px;
 }
 
-.cv-upload-area {
+.ofe-cv-upload-area {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -191,27 +471,22 @@
     user-select: none;
 }
 
-.cv-upload-area:hover {
+.ofe-cv-upload-area:hover {
     border-color: #c0392b;
     background: #fff6f5;
 }
 
-.cv-icon {
-    font-size: 36px;
-}
+.ofe-cv-icon { font-size: 36px; }
 
-.cv-file-label {
+.ofe-cv-file-label {
     font-size: 14px;
     color: #555555;
-    cursor: pointer;
     text-align: center;
 }
 
-.cv-ver {
-    margin-top: 20px;
-}
+.ofe-cv-ver { margin-top: 20px; }
 
-.btn-ver-cv {
+.ofe-btn-ver-cv {
     display: inline-block;
     padding: 9px 18px;
     background: #c0392b;
@@ -223,12 +498,10 @@
     transition: background .15s;
 }
 
-.btn-ver-cv:hover {
-    background: #e74c3c;
-}
+.ofe-btn-ver-cv:hover { background: #e74c3c; }
 
-/* ─── Modal de detalle de puesto ─────────────────────────────────────────── */
-.modal-overlay {
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.ofe-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,.45);
@@ -238,7 +511,7 @@
     z-index: 200;
 }
 
-.modal-box {
+.ofe-modal-box {
     background: #ffffff;
     border-radius: 6px;
     padding: 28px 32px;
@@ -251,7 +524,7 @@
     box-shadow: 0 8px 32px rgba(0,0,0,.2);
 }
 
-.modal-close {
+.ofe-modal-close {
     position: absolute;
     top: 12px;
     right: 14px;
@@ -262,33 +535,18 @@
     color: #888888;
 }
 
-.modal-empresa {
-    font-size: 12px;
-    color: #888888;
-    margin: 0;
-}
+.ofe-modal-empresa  { font-size: 12px; color: #888888; margin: 0; }
+.ofe-modal-titulo   { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0; }
+.ofe-modal-salario  { font-size: 15px; color: #1a1a1a; margin: 0; }
 
-.modal-titulo {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
-}
-
-.modal-salario {
-    font-size: 15px;
-    color: #1a1a1a;
-    margin: 0;
-}
-
-.modal-requisitos h4 {
+.ofe-modal-requisitos h4 {
     font-size: 12px;
     text-transform: uppercase;
     color: #888888;
     margin: 8px 0 6px;
 }
 
-.modal-requisitos ul {
+.ofe-modal-requisitos ul {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -297,54 +555,75 @@
     gap: 6px;
 }
 
-.modal-requisitos li {
+.ofe-modal-requisitos li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #ffffff;
+    background: #f5f5f5;
     border: 1px solid #e0e0e0;
     padding: 6px 10px;
     border-radius: 4px;
     font-size: 13px;
 }
 
-.req-nivel {
+.ofe-req-nivel {
     background: #c0392b;
     color: #ffffff;
     font-size: 11px;
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 12px;
+    white-space: nowrap;
 }
 
-/* ─── Botón ver detalle ─────────────────────────────────────────────────── */
-.btn-ver-detalle {
-    margin-top: 6px;
-    width: 100%;
-    padding: 9px 18px;
-    background: #555555;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.ofe-footer {
+    background: #ffffff;
+    padding: 0 24px 20px;
+}
+
+.ofe-footer__divider {
+    height: 2px;
+    background: #c0392b;
+    margin-bottom: 14px;
+}
+
+.ofe-footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ofe-footer__izq,
+.ofe-footer__der {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ofe-footer__marca {
+    font-size: 15px;
+    font-weight: 700;
+    color: #c0392b;
+}
+
+.ofe-footer__empresa,
+.ofe-footer__der span {
     font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s;
+    color: #c0392b;
 }
 
-.btn-ver-detalle:hover {
-    background: #333333;
-}
-
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .ofe-habilidades-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .ofe-panel,
-    .ofe-cv-card,
-    .modal-box {
-        padding: 20px 16px;
-    }
+    .ofe-header__inner { flex-wrap: wrap; gap: 12px; }
+    .ofe-nav { gap: 12px; }
+    .ofe-header__nombre { display: none; }
+    .ofe-main { padding: 20px 16px; }
+    .ofe-habilidades-layout { grid-template-columns: 1fr; }
+    .ofe-btn { width: 100%; }
+    .ofe-puestos-grid { grid-template-columns: 1fr; }
+    .ofe-cv-card { padding: 20px 16px; }
+    .ofe-modal-box { padding: 20px 16px; }
 }
