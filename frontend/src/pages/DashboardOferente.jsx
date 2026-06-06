@@ -372,7 +372,7 @@ function SeccionCV() {
                     disabled={loading || !archivo}
                     style={{ marginTop: "1rem" }}
                 >
-                    {loading ? "Subiendo…" : "Subir CV"}
+                    {loading ? "Subiendo…":"Click en el recuadro para subir CV"}
                 </button>
             </div>
 
