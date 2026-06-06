@@ -19,6 +19,7 @@ function SeccionCaracteristicas() {
     const [editandoId, setEditandoId] = useState(null);
     const [editNombre, setEditNombre] = useState("");
 
+
     // FIX: usar /api/admin/caracteristicas (raíces con hijos anidados)
     // en lugar de /todas (findAll plano sin hijos)
     const cargar = async () => {
@@ -237,7 +238,7 @@ export default function DashboardAdmin({ onLogout }) {
     const [vista, setVista] = useState("inicio");
     const [mensaje, setMensaje] = useState("");
 
-    const { empresasPendientes, oferentesPendientes, stats, refetch, errorMsg } = usePendientes();
+    const { empresasPendientes, oferentesPendientes, puestosPendientes, stats, refetch, errorMsg } = usePendientes();
 
     const aprobarEmpresa = async (correo) => {
         const token = localStorage.getItem("token");
@@ -267,6 +268,16 @@ export default function DashboardAdmin({ onLogout }) {
         refetch();
     };
 
+    const aprobarPuesto = async (id) => {
+        const token = localStorage.getItem("token");
+        await fetch(`/api/admin/puestos-pendientes/aprobar?id=${id}`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        });
+        setMensaje("Puesto publicado");
+        refetch();
+    };
+
     return (
         <div className="dashboard-wrapper">
             <nav className="dash-nav">
@@ -280,6 +291,9 @@ export default function DashboardAdmin({ onLogout }) {
                     </button>
                     <button className={vista === "oferentes" ? "active" : ""} onClick={() => setVista("oferentes")}>
                         Oferentes {stats.oferentesPendientes > 0 && <span className="badge">{stats.oferentesPendientes}</span>}
+                    </button>
+                    <button className={vista === "puestos" ? "active" : ""} onClick={() => setVista("puestos")}>
+                        Puestos {stats.puestosPendientes > 0 && <span className="badge">{stats.puestosPendientes}</span>}
                     </button>
                     <button className={vista === "caracteristicas" ? "active" : ""} onClick={() => setVista("caracteristicas")}>
                         Características
@@ -315,6 +329,11 @@ export default function DashboardAdmin({ onLogout }) {
                             <span className="stat-num">⚙</span>
                             <span className="stat-label">Gestionar características</span>
                         </div>
+                        <div className="stat-card" onClick={() => setVista("puestos")}>
+                            <span className="stat-num">{stats.puestosPendientes}</span>
+                            <span className="stat-label">Puestos pendientes</span>
+                        </div>
+
                     </div>
                 )}
 
@@ -380,7 +399,36 @@ export default function DashboardAdmin({ onLogout }) {
                     </div>
                 )}
 
-                {/* ── Características ── */}
+                {vista === "puestos" && (
+                    <div>
+                        <h2 className="dash-titulo">Puestos pendientes de publicación</h2>
+                        {puestosPendientes.length === 0
+                            ? <p className="estado-msg">No hay puestos pendientes.</p>
+                            : (
+                                <table className="dash-table">
+                                    <thead>
+                                    <tr><th>ID</th><th>Descripción</th><th>Empresa</th><th>Salario</th><th>Acción</th></tr>
+                                    </thead>
+                                    <tbody>
+                                    {puestosPendientes.map((p) => (
+                                        <tr key={p.id}>
+                                            <td>{p.id}</td>
+                                            <td>{p.descripcion}</td>
+                                            <td>{p.nombreEmpresa}</td>
+                                            <td>₡ {p.salario.toLocaleString("es-CR")}</td>
+                                            <td>
+                                                <button className="btn-aprobar" onClick={() => aprobarPuesto(p.id)}>
+                                                    Publicar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )
+                        }
+                    </div>
+                )}
                 {vista === "caracteristicas" && <SeccionCaracteristicas />}
             </main>
         </div>

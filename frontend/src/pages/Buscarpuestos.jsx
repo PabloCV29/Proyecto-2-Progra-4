@@ -59,8 +59,24 @@ function NodoCaracteristica({ nodo, seleccionados, onToggle, depth = 0 }) {
 }
 
 function PuestoCard({ puesto, onVerDetalle }) {
+    const tieneRequisitos = puesto.caracteristicasPuestos?.length > 0;
+
     return (
         <div className="puesto-card">
+            <div className="puesto-tooltip">
+                <div className="puesto-tooltip__titulo">Requisitos</div>
+                {tieneRequisitos ? (
+                    puesto.caracteristicasPuestos.map((cp) => (
+                        <div key={cp.id} className="puesto-tooltip__item">
+                            <span>{cp.caracteristicas?.nombre ?? "—"}</span>
+                            <span className="puesto-tooltip__nivel">Niv. {cp.nivelRequerido}</span>
+                        </div>
+                    ))
+                ) : (
+                    <span className="puesto-tooltip__vacio">Sin requisitos definidos</span>
+                )}
+            </div>
+
             <div className="puesto-empresa">{puesto.nombreEmpresa}</div>
             <div className="puesto-descripcion">{puesto.descripcion}</div>
             <div className="puesto-salario">

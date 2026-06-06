@@ -110,70 +110,58 @@ function CandidatosPuesto({ puesto, candidatos ,onVolver, onVerDetalle }) {
 }
 
 function DetalleOferente({ oferente, onVolver }) {
+    const cvUrl = oferente.curriculum
+        ? `/api/oferente/cv/${oferente.identificacion}`
+        : null;
+
     return (
         <div className="emp-seccion">
-            <h2 className="emp-seccion__titulo">
-                Detalle de oferente
-            </h2>
+            <h2 className="emp-seccion__titulo">Detalle de oferente</h2>
+
             <div className="emp-detalle-card">
-                <h3>{oferente.nombre} {oferente.apellido}</h3>
-                <p>
-                    <strong>Identificación:</strong>
-                    {" "}
-                    {oferente.identificacion}
-                </p>
-                <p>
-                    <strong>Email:</strong>
-                    {" "}
-                    {oferente.correo}
-                </p>
-                <p>
-                    <strong>Teléfono:</strong>
-                    {" "}
-                    {oferente.telefono}
-                </p>
-                <p>
-                    <strong>Residencia:</strong>
-                    {" "}
-                    {oferente.residencia}
-                </p>
+                <div className="emp-detalle-card__top">
+                    <div>
+                        <h3>{oferente.nombre} {oferente.apellido}</h3>
+                        <p><strong>Identificación:</strong> {oferente.identificacion}</p>
+                        <p><strong>Email:</strong> {oferente.correo}</p>
+                        <p><strong>Teléfono:</strong> {oferente.telefono}</p>
+                        <p><strong>Residencia:</strong> {oferente.residencia}</p>
+                    </div>
+                    {cvUrl ? (
+                        <a
+                            href={cvUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="emp-btn-cv"
+                        >
+                            📄 Ver CV
+                        </a>
+                    ) : (
+                        <span className="emp-cv-sin">Sin CV subido</span>
+                    )}
+                </div>
             </div>
-            {oferente.curriculum ? (
-                <a href={`/api/oferente/cv/${oferente.identificacion}`}
-                   target="_blank" rel="noreferrer"
-                   className="emp-btn-cv">
-                     Ver CV
-                </a>
-            ) : (
-                <span className="emp-cv-sin">Sin CV subido</span>
-            )}
-            <h3 className="emp-subtitulo">
-                Habilidades
-            </h3>
+
+            <h3 className="emp-subtitulo" style={{ marginTop: "20px" }}>Habilidades</h3>
             <table className="emp-tabla">
                 <thead>
-                <tr>
-                    <th>Característica</th>
-                    <th>Nivel</th>
-                </tr>
+                <tr><th>Característica</th><th>Nivel</th></tr>
                 </thead>
                 <tbody>
                 {oferente.habilidades?.map(h => (
                     <tr key={h.id}>
+                        <td>{h.caracteristica?.nombre}</td>
                         <td>
-                            {h.caracteristica?.nombre}
-                        </td>
-                        <td>
-                            {h.nivel}
+                                <span className="emp-nivel-badge">
+                                    {"★".repeat(h.nivel)}{"☆".repeat(5 - h.nivel)}
+                                </span>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-            <button
-                className="emp-btn emp-btn--secundario"
-                onClick={onVolver}
-            >
+
+            <button className="emp-btn emp-btn--secundario" onClick={onVolver}>
                 Volver
             </button>
         </div>

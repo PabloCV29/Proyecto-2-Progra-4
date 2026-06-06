@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("SCOPE_ADM")
                         .requestMatchers("/api/empresa/**").hasAnyAuthority("SCOPE_EMP", "SCOPE_ADM")
                         .requestMatchers("/api/oferente/**").hasAnyAuthority("SCOPE_OFE", "SCOPE_ADM")
+                        .requestMatchers("/", "/index.html", "/assets/**", "/*.js", "/*.css", "/*.svg", "/*.ico").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()))

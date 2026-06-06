@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 export function usePendientes() {
     const [empresasPendientes, setEmpresasPendientes] = useState([]);
     const [oferentesPendientes, setOferentesPendientes] = useState([]);
+    const [puestosPendientes, setPuestosPendientes] = useState([]);
     const refetchRef = useRef(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
@@ -16,17 +17,20 @@ export function usePendientes() {
                 "Content-Type": "application/json",
             };
             try {
-                const [resE, resO] = await Promise.all([
-                    fetch("/api/admin/empresas-pendientes", { headers: authHeaders }),
+                const [resE, resO, resP] = await Promise.all([
+                    fetch("/api/admin/empresas-pendientes",  { headers: authHeaders }),
                     fetch("/api/admin/oferentes-pendientes", { headers: authHeaders }),
+                    fetch("/api/admin/puestos-pendientes",   { headers: authHeaders }),
                 ]);
-                const empresas = await resE.json();
+                const empresas  = await resE.json();
                 const oferentes = await resO.json();
+                const puestos   = await resP.json();
                 if (!cancelado) {
                     setEmpresasPendientes(empresas);
                     setOferentesPendientes(oferentes);
+                    setPuestosPendientes(puestos);
                 }
-            } catch(err) {
+            } catch (err) {
                 if (!cancelado) setErrorMsg(err.message);
             }
         }
@@ -40,10 +44,12 @@ export function usePendientes() {
     return {
         empresasPendientes,
         oferentesPendientes,
-        errorMsg,           // ← agregar esta línea
+        puestosPendientes,
+        errorMsg,
         stats: {
-            empresasPendientes: empresasPendientes.length,
+            empresasPendientes:  empresasPendientes.length,
             oferentesPendientes: oferentesPendientes.length,
+            puestosPendientes:   puestosPendientes.length,
         },
         refetch: () => refetchRef.current?.(),
     };

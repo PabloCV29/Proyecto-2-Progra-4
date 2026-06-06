@@ -240,6 +240,25 @@ public class Controller {
 //    }
 
     // ── ADMIN ────────────────────────────────────────────────────────────────────
+
+    @GetMapping("/admin/puestos-pendientes")
+    public ResponseEntity<List<PuestoResumenDTO>> puestosPendientes() {
+        List<PuestoResumenDTO> lista = puestoRepository.findByPublicoFalseAndActivoTrue()
+                .stream()
+                .map(PuestoResumenDTO::new)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(lista);
+    }
+
+    @PostMapping("/admin/puestos-pendientes/aprobar")
+    public ResponseEntity<Void> aprobarPuesto(@RequestParam Long id) {
+        Puesto puesto = puestoService.buscarPuestoPorId(id);
+        if (puesto == null) return ResponseEntity.notFound().build();
+        puesto.setPublico(true);
+        puestoService.publicarPuesto(puesto);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/admin/empresas-pendientes")
     public List<Empresa> empresasPendientes() {
         return empresaService.listaEsperaAprobacion();

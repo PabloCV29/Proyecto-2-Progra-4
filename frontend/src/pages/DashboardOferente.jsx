@@ -21,21 +21,48 @@ function fetchAuth(url, options = {}) {
 
 /* ─── Sección: Puestos disponibles ───────────────────────────────────────── */
 function SeccionPuestos() {
-    const [puestos, setPuestos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [detalle, setDetalle] = useState(null);
+    const [puestos, setPuestos]       = useState([]);
+    const [habilidades, setHabilidades] = useState([]);
+    const [loading, setLoading]       = useState(true);
+    const [detalle, setDetalle]       = useState(null);
 
     useEffect(() => {
-        fetch(`${API}/puestos/ultimos`)
-            .then((r) => r.json())
-            .then((d) => { setPuestos(d); setLoading(false); })
+        // Cargar puestos y habilidades propias en paralelo
+        Promise.all([
+            fetch(`${API}/puestos/ultimos`).then((r) => r.json()),
+            fetch(`${API}/oferente/mis-habilidades`, { headers: authHeaders() }).then((r) => r.json()),
+        ])
+            .then(([ps, hs]) => {
+                setPuestos(ps);
+                setHabilidades(hs);
+                setLoading(false);
+            })
             .catch(() => setLoading(false));
     }, []);
 
+    const calcularMatch = (puesto) => {
+        const requisitos = puesto.caracteristicasPuestos;
+        if (!requisitos || requisitos.length === 0) return null;
+        const cumplidos = requisitos.filter((req) =>
+            habilidades.some(
+                (h) =>
+                    h.caracteristicaId === req.caracteristicas?.id &&
+                    h.nivel >= req.nivelRequerido
+            )
+        ).length;
+        return Math.round((cumplidos / requisitos.length) * 100);
+    };
+
     const verDetalle = async (id) => {
-        const res = await fetch(`${API}/puestos/${id}`);
+        const res  = await fetch(`${API}/puestos/${id}`);
         const data = await res.json();
         setDetalle(data);
+    };
+
+    const colorMatch = (pct) => {
+        if (pct >= 80) return "#27ae60";
+        if (pct >= 50) return "#f39c12";
+        return "#c0392b";
     };
 
     return (
@@ -43,20 +70,37 @@ function SeccionPuestos() {
             <h2 className="ofe-seccion__titulo">Puestos disponibles</h2>
             {loading && <p className="ofe-estado">Cargando puestos…</p>}
             <div className="ofe-puestos-grid">
-                {puestos.map((p) => (
-                    <div key={p.id} className="ofe-puesto-card">
-                        <div className="ofe-puesto-card__header">
-                            <h3 className="ofe-puesto-card__nombre">{p.descripcion}</h3>
+                {puestos.map((p) => {
+                    const match = calcularMatch(p);
+                    return (
+                        <div key={p.id} className="ofe-puesto-card">
+                            <div className="ofe-puesto-card__header">
+                                <h3 className="ofe-puesto-card__nombre">{p.descripcion}</h3>
+                                {match !== null && (
+                                    <span style={{
+                                        fontSize: "12px",
+                                        fontWeight: 700,
+                                        padding: "2px 8px",
+                                        borderRadius: "12px",
+                                        background: colorMatch(match),
+                                        color: "#fff",
+                                        whiteSpace: "nowrap",
+                                        flexShrink: 0,
+                                    }}>
+                                        {match}% match
+                                    </span>
+                                )}
+                            </div>
+                            <p className="ofe-puesto-card__empresa">{p.nombreEmpresa}</p>
+                            <p className="ofe-puesto-card__salario">
+                                ₡ {p.salario.toLocaleString("es-CR", { minimumFractionDigits: 2 })}
+                            </p>
+                            <button className="ofe-btn ofe-btn--primario" onClick={() => verDetalle(p.id)}>
+                                Ver detalle
+                            </button>
                         </div>
-                        <p className="ofe-puesto-card__empresa">{p.nombreEmpresa}</p>
-                        <p className="ofe-puesto-card__salario">
-                            ₡ {p.salario.toLocaleString("es-CR", { minimumFractionDigits: 2 })}
-                        </p>
-                        <button className="ofe-btn ofe-btn--primario" onClick={() => verDetalle(p.id)}>
-                            Ver detalle
-                        </button>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {detalle && (
@@ -72,12 +116,22 @@ function SeccionPuestos() {
                             <div className="ofe-modal-requisitos">
                                 <h4>Requisitos</h4>
                                 <ul>
-                                    {detalle.caracteristicasPuestos.map((cp) => (
-                                        <li key={cp.id}>
-                                            <span>{cp.caracteristicas?.nombre ?? "—"}</span>
-                                            <span className="ofe-req-nivel">Nivel {cp.nivelRequerido}</span>
-                                        </li>
-                                    ))}
+                                    {detalle.caracteristicasPuestos.map((cp) => {
+                                        const cumple = habilidades.some(
+                                            (h) =>
+                                                h.caracteristicaId === cp.caracteristicas?.id &&
+                                                h.nivel >= cp.nivelRequerido
+                                        );
+                                        return (
+                                            <li key={cp.id}>
+                                                <span>{cp.caracteristicas?.nombre ?? "—"}</span>
+                                                <span style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                                                    <span className="ofe-req-nivel">Nivel {cp.nivelRequerido}</span>
+                                                    <span style={{ fontSize: "14px" }}>{cumple ? "✅" : "❌"}</span>
+                                                </span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         )}

@@ -291,3 +291,66 @@
         max-height: 260px;
     }
 }
+
+/* ─── Tooltip de requisitos en hover ─────────────────────────────────────── */
+.puesto-card {
+    position: relative;
+}
+
+.puesto-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: var(--radio);
+    padding: 10px 12px;
+    font-size: 12px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    pointer-events: none;
+}
+
+.puesto-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border: 6px solid transparent;
+    border-top-color: #1a1a1a;
+}
+
+.puesto-tooltip__titulo {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #f39c12;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.puesto-tooltip__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.puesto-tooltip__item:last-child {
+    border-bottom: none;
+}
+
+.puesto-tooltip__nivel {
+    color: #f39c12;
+    font-size: 11px;
+}
+
+.puesto-tooltip__vacio {
+    color: #aaa;
+    font-style: italic;
+}
+
+.puesto-card:hover .puesto-tooltip {
+    display: block;
+}

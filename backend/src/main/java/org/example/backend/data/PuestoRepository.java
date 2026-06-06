@@ -25,5 +25,6 @@ public interface PuestoRepository extends JpaRepository<Puesto, Long> {
             "WHERE p.publico = true AND p.activo = true " +
             "AND cp.caracteristicas.id IN :ids")
     List<Puesto> findPublicosPorAlgunaCaracteristica(@Param("ids") List<Long> ids);
+    List<Puesto> findByPublicoFalseAndActivoTrue();
 
 }
