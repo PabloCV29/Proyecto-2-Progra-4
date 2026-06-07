@@ -117,10 +117,10 @@ export default function RegistroEmpresa({ onCancelar }) {  // ‚Üê recibir funci√
                     </div>
 
                     <div className="actions">
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                        <button type="submit" className="btn btn-secondary" disabled={loading}>
                             {loading ? "Registrando..." : "Registrar"}
                         </button>
-                        <button type="button" className="btn btn-secondary"
+                        <button type="button" className="btn btn-primary"
                                 onClick={onCancelar} disabled={loading}>
                             Cancelar
                         </button>
